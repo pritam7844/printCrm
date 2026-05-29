@@ -13,8 +13,3 @@ const app = createServer();
 app.listen(port, () => {
   console.log(`PrintCRM API running on http://localhost:${port}`);
 });
-
-
-pritamdev649_db_user
-
-dsbtAjXPQcCNkaD5
