@@ -1,0 +1,99 @@
+# CursorRules for PrintCRM React & Tailwind Project (Production SaaS Ready)
+
+You are an expert Frontend Architect and Product Designer. Follow these strict guidelines when coding the PrintCRM application, ensuring clean, resellable SaaS principles, Firebase notification bindings, and provider-agnostic WhatsApp integrations.
+
+---
+
+## 🎨 Theme & Color Tokens (Ink & Paper Premium Editorial Aesthetic)
+Replicate the clean, geometric, high-end visual style matching the custom theme:
+
+*   **Primary Accent**: `#e8521a` (Warm Burnt Orange) | Light: `#fde8df` | Hover/Alt: `#f07240`
+*   **Ink (Neutral Dark)**:
+    *   Default Ink: `#0f0e0c` (Charcoal black)
+    *   Ink 2: `#2a2825`
+    *   Ink 3: `#4a4844`
+    *   Ink 4: `#7a7874`
+*   **Paper (Neutral Light)**:
+    *   Default Paper: `#faf8f4` (Earthy off-white)
+    *   Paper 2: `#f2ede4`
+    *   Paper 3: `#e8e0d0`
+*   **System Colors**:
+    *   **Green (Success)**: `#1a7a4a` | Light: `#d8f0e4`
+    *   **Amber (Warning/Pending)**: `#c47a10` | Light: `#fef0d0`
+    *   **Red (Danger/Overdue)**: `#c41a1a` | Light: `#fde4e4`
+    *   **Purple (Special/Actions)**: `#6a1ac4` | Light: `#ede4fd`
+    *   **Blue (Info/Cold)**: `#1a4ac4` | Light: `#e4ecfd`
+
+### Typography & Spacing Rules
+*   **Fonts**: `'Syne', sans-serif` for titles/logos; `'DM Sans', sans-serif` for labels and dashboard text; `'DM Mono', monospace` for money values, counts, dates, and database reference IDs.
+*   **Design Cleanliness**: Emphasize generous white-space, thin dividers (`border-paper-3/40`), subtle interactive card animations (`transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md`), and custom glassmorphism modal overlays.
+
+---
+
+## 🔐 Environmental Configurations & Firebase Cloud Messaging (FCM)
+Never hardcode API keys or secret credentials. All configurations must pull dynamically from environment files.
+
+### 1. Environment Template (`.env.example`):
+```env
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain_here
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id_here
+VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket_here
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id_here
+VITE_FIREBASE_APP_ID=your_firebase_app_id_here
+VITE_FIREBASE_VAPID_KEY=your_firebase_vapid_key_here
+
+# WhatsApp Generic Gateway default fallback
+VITE_WHATSAPP_PROVIDER=interakt
+VITE_WHATSAPP_API_BASE_URL=https://api.interakt.ai/v1
+VITE_WHATSAPP_API_TOKEN=your_whatsapp_default_token
+```
+
+### 2. Notification System Architecture
+*   Implement Firebase initialization in `src/utils/firebase.js` using `import.meta.env` keys.
+*   Provide a service worker registration setup in `src/main.js` targeting `public/firebase-messaging-sw.js` to handle background push triggers.
+*   Use a global dynamic toast overlay to render in-app notifications seamlessly when Firebase receives messages while the app is active in the foreground.
+
+---
+
+## 💬 Resellable & Provider-Agnostic WhatsApp Engine
+The software must be designed as a white-labeled SaaS product. If given to another print shop or business, they must be able to configure **any** WhatsApp business provider (Interakt, Wati, AiSensy, Twilio, or custom webhooks) without changing code.
+
+### 1. Dynamic Gateway Architecture (`src/utils/whatsappService.js`)
+*   Implement a unified service layer (`WhatsAppService`) utilizing a strategy pattern or modular driver architecture.
+*   The service reads credentials and provider types dynamically from a configuration state (stored in local database/storage or Context) rather than hardcoding endpoints.
+*   Provide a structured API interface supporting standard methods:
+    *   `sendTemplateMessage(recipientNumber, templateName, variables)`
+    *   `sendTextMessage(recipientNumber, messageText)`
+    *   `receiveIncomingLeadWebhook(payload, providerType)`
+
+### 2. Client-Facing Settings Interface
+*   Create a clean, dedicated WhatsApp Setup Tab inside `Settings` containing:
+    *   **Provider Selector**: Dropdown (e.g. `Interakt`, `Wati`, `AiSensy`, `Twilio`, `Custom HTTP Gateway`).
+    *   **API Connection Credentials**: Key inputs for `API Base URL`, `Authorization Header / Bearer Token Value`, and `Custom JSON Body Template` (for custom POST triggers).
+    *   **Webhook Endpoints**: Render a custom connection URL that the selected provider can target to send incoming leads.
+    *   **Auto-mapping Settings**: Mapping JSON response paths (e.g. mapping `payload.name` and `payload.phone` to lead database fields).
+
+---
+
+## 📁 SaaS-Ready Modular Folder Structure
+Keep the workspace cleanly structured and easy to scale:
+```
+src/
+├── assets/          # Static logos and clean brand graphics
+├── components/      # Reusable visual components
+│   ├── ui/          # Atom components (Button, Input, Badge, GlassModal, CustomCard)
+│   ├── layout/      # AppShell, responsive Sidebar, notification bell
+│   └── shared/      # Charts, generic lead tables, filter controls
+├── context/         # React Context stores
+│   ├── CRMDataContext.jsx     # Master database simulation (leads, orders, payments)
+│   └── NotificationContext.jsx # Handles Firebase foreground pushes and alert banners
+├── hooks/           # Reusable custom hooks (useWhatsApp, useFirebaseNotification)
+├── pages/           # Distinct views (Dashboard, Leads, Kanban Pipeline, Customers, Team, Matrix, Settings)
+├── utils/           # Utility drivers
+│   ├── firebase.js          # Dynamic FCM initializer using .env values
+│   └── whatsappGateway.js    # Provider-agnostic strategy client driver
+├── styles/          # Google Font imports & Tailwind base
+└── utils/           # Helper formatters (currency, dates, custom drivers)
+```

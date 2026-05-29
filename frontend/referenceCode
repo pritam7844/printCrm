@@ -1,0 +1,2775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrintCRM — Print Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --ink-2: #2a2825;
+    --ink-3: #4a4844;
+    --ink-4: #7a7874;
+    --paper: #faf8f4;
+    --paper-2: #f2ede4;
+    --paper-3: #e8e0d0;
+    --accent: #e8521a;
+    --accent-2: #f07240;
+    --accent-light: #fde8df;
+    --green: #1a7a4a;
+    --green-light: #d8f0e4;
+    --amber: #c47a10;
+    --amber-light: #fef0d0;
+    --red: #c41a1a;
+    --red-light: #fde4e4;
+    --purple: #6a1ac4;
+    --purple-light: #ede4fd;
+    --blue: #1a4ac4;
+    --blue-light: #e4ecfd;
+    --sidebar-w: 240px;
+    --header-h: 60px;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(15,14,12,0.08);
+    --shadow-lg: 0 8px 32px rgba(15,14,12,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* ── LOGIN PAGE ── */
+  #login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  #login-page::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(232,82,26,0.04) 60px, rgba(232,82,26,0.04) 61px);
+  }
+  .login-box {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 48px 44px;
+    width: 420px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 1;
+  }
+  .login-brand {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 32px;
+  }
+  .login-brand-icon {
+    width: 40px; height: 40px; background: var(--accent); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: white;
+  }
+  .login-brand-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800; color: var(--ink);
+  }
+  .login-brand-name span { color: var(--accent); }
+  .login-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 700; margin-bottom: 6px;
+  }
+  .login-sub { color: var(--ink-4); margin-bottom: 28px; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 13px; }
+  .form-input {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--paper-3);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--ink);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--accent); background: white; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 18px; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.18s;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent); color: white;
+  }
+  .btn-primary:hover { background: var(--accent-2); }
+  .btn-secondary {
+    background: var(--paper-2); color: var(--ink);
+    border: 1.5px solid var(--paper-3);
+  }
+  .btn-secondary:hover { background: var(--paper-3); }
+  .btn-ghost { background: transparent; color: var(--ink-3); }
+  .btn-ghost:hover { background: var(--paper-2); }
+  .btn-success { background: var(--green); color: white; }
+  .btn-success:hover { opacity: 0.9; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-full { width: 100%; }
+
+  /* ── APP SHELL ── */
+  #app { display: none; height: 100vh; overflow: hidden; }
+  #app.visible { display: flex; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--ink);
+    display: flex; flex-direction: column;
+    flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+  }
+  .sidebar-logo {
+    padding: 20px 20px 16px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logo-icon {
+    width: 34px; height: 34px; background: var(--accent); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .sidebar-logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 800; color: white;
+  }
+  .sidebar-logo-text span { color: var(--accent); }
+  .sidebar-user {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-user-name {
+    font-weight: 600; color: white; font-size: 13px;
+  }
+  .sidebar-user-role {
+    font-size: 11px; color: var(--accent-2); font-family: 'DM Mono', monospace;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;
+  }
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+  .nav-section {
+    font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 8px 20px 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    font-size: 13.5px; font-weight: 400;
+    transition: all 0.15s; border-left: 3px solid transparent;
+    user-select: none;
+  }
+  .nav-item:hover { color: white; background: rgba(255,255,255,0.06); }
+  .nav-item.active {
+    color: white; background: rgba(232,82,26,0.15);
+    border-left-color: var(--accent); font-weight: 500;
+  }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-left: auto; background: var(--accent);
+    color: white; font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 20px; font-family: 'DM Mono', monospace;
+  }
+  .sidebar-bottom {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logout {
+    display: flex; align-items: center; gap: 8px;
+    color: rgba(255,255,255,0.4); font-size: 13px; cursor: pointer;
+    padding: 8px; border-radius: 8px; transition: all 0.15s;
+  }
+  .sidebar-logout:hover { color: var(--red); background: rgba(196,26,26,0.1); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .topbar {
+    height: var(--header-h); background: white;
+    border-bottom: 1px solid var(--paper-3);
+    display: flex; align-items: center; padding: 0 24px;
+    gap: 12px; flex-shrink: 0;
+  }
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700; flex: 1;
+  }
+  .topbar-search {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--paper-2); border: 1.5px solid var(--paper-3);
+    border-radius: 8px; padding: 7px 12px;
+    font-size: 13px; color: var(--ink-4); width: 240px;
+  }
+  .topbar-search input {
+    border: none; background: transparent; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--ink); width: 100%;
+  }
+  .notif-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--paper-2); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; position: relative;
+    border: 1.5px solid var(--paper-3); transition: all 0.15s;
+  }
+  .notif-btn:hover { background: var(--paper-3); }
+  .notif-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 8px; height: 8px; background: var(--accent);
+    border-radius: 50%; border: 2px solid white;
+  }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    font-family: 'Syne', sans-serif;
+  }
+  .content {
+    flex: 1; overflow-y: auto; padding: 24px;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── DASHBOARD ── */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white; border-radius: var(--radius);
+    padding: 20px; border: 1.5px solid var(--paper-3);
+    position: relative; overflow: hidden;
+  }
+  .stat-card::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--paper-3);
+  }
+  .stat-card.accent::after { background: var(--accent); }
+  .stat-card.green::after { background: var(--green); }
+  .stat-card.amber::after { background: var(--amber); }
+  .stat-card.red::after { background: var(--red); }
+  .stat-label {
+    font-size: 11.5px; font-weight: 600; color: var(--ink-4);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    font-family: 'DM Mono', monospace; margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800; color: var(--ink);
+    line-height: 1;
+  }
+  .stat-sub { font-size: 12px; color: var(--ink-4); margin-top: 4px; }
+  .stat-icon {
+    position: absolute; right: 16px; top: 16px;
+    font-size: 24px; opacity: 0.15;
+  }
+  .dashboard-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .dashboard-grid-3 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: white; border-radius: var(--radius);
+    border: 1.5px solid var(--paper-3);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--paper-3);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+  }
+  .card-body { padding: 16px 20px; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .badge-cold { background: var(--blue-light); color: var(--blue); }
+  .badge-warm { background: var(--amber-light); color: var(--amber); }
+  .badge-hot { background: var(--accent-light); color: var(--accent); }
+  .badge-general { background: var(--paper-2); color: var(--ink-3); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-ink { background: var(--paper-2); color: var(--ink-3); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%; border-collapse: collapse;
+  }
+  th {
+    text-align: left; padding: 10px 16px;
+    font-size: 11px; font-weight: 600;
+    color: var(--ink-4); text-transform: uppercase;
+    letter-spacing: 0.5px; font-family: 'DM Mono', monospace;
+    border-bottom: 1px solid var(--paper-3);
+    background: var(--paper-2); white-space: nowrap;
+  }
+  td {
+    padding: 12px 16px; font-size: 13.5px;
+    border-bottom: 1px solid var(--paper-3);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--paper-2); }
+  .td-name { font-weight: 500; }
+  .td-sub { font-size: 11.5px; color: var(--ink-4); margin-top: 2px; }
+
+  /* ── FILTERS BAR ── */
+  .filters-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .filter-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 8px;
+    background: white; border: 1.5px solid var(--paper-3);
+    font-size: 13px; color: var(--ink-3); cursor: pointer;
+    transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+    user-select: none;
+  }
+  .filter-pill:hover, .filter-pill.active {
+    border-color: var(--accent); color: var(--accent);
+    background: var(--accent-light);
+  }
+  .filter-select {
+    padding: 7px 12px; border-radius: 8px;
+    background: white; border: 1.5px solid var(--paper-3);
+    font-size: 13px; color: var(--ink); cursor: pointer;
+    font-family: 'DM Sans', sans-serif; outline: none;
+  }
+  .filter-select:focus { border-color: var(--accent); }
+
+  /* ── LEAD CARD ── */
+  .leads-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+  .lead-card {
+    background: white; border-radius: var(--radius);
+    border: 1.5px solid var(--paper-3);
+    padding: 16px; cursor: pointer;
+    transition: all 0.18s; position: relative;
+    overflow: hidden;
+  }
+  .lead-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+  .lead-card-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; margin-bottom: 12px;
+  }
+  .lead-name { font-weight: 600; font-size: 15px; }
+  .lead-phone { font-size: 12px; color: var(--ink-4); margin-top: 2px; font-family: 'DM Mono', monospace; }
+  .lead-product {
+    font-size: 13px; color: var(--ink-3); margin-bottom: 10px;
+  }
+  .lead-product strong { color: var(--ink); }
+  .lead-meta {
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap; margin-bottom: 12px;
+  }
+  .lead-source {
+    font-size: 11px; color: var(--ink-4); font-family: 'DM Mono', monospace;
+    background: var(--paper-2); padding: 2px 8px; border-radius: 4px;
+  }
+  .lead-actions {
+    display: flex; gap: 8px; border-top: 1px solid var(--paper-3);
+    padding-top: 12px; margin-top: 4px;
+  }
+  .lead-action-btn {
+    flex: 1; padding: 7px; border-radius: 7px;
+    background: var(--paper-2); border: none; cursor: pointer;
+    font-size: 13px; color: var(--ink-3); transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .lead-action-btn:hover { background: var(--accent-light); color: var(--accent); }
+  .lead-assigned {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--ink-4);
+  }
+  .avatar-xs {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700;
+  }
+
+  /* ── KANBAN ── */
+  .kanban {
+    display: flex; gap: 14px; overflow-x: auto;
+    padding-bottom: 16px; min-height: calc(100vh - 180px);
+  }
+  .kanban-col {
+    min-width: 260px; width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+  }
+  .kanban-col-header {
+    background: white; border: 1.5px solid var(--paper-3);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .kanban-col-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .kanban-col-name {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; flex: 1;
+  }
+  .kanban-col-count {
+    background: var(--paper-2); color: var(--ink-4);
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    padding: 2px 7px; border-radius: 20px; font-weight: 600;
+  }
+  .kanban-cards {
+    flex: 1; background: var(--paper-2);
+    border: 1.5px solid var(--paper-3); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 10px; display: flex; flex-direction: column; gap: 8px;
+    overflow-y: auto;
+  }
+  .kanban-card {
+    background: white; border-radius: 8px;
+    border: 1.5px solid var(--paper-3);
+    padding: 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .kanban-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+  .kanban-card-name { font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+  .kanban-card-product { font-size: 12px; color: var(--ink-3); margin-bottom: 8px; }
+  .kanban-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .deadline-badge {
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    padding: 2px 8px; border-radius: 4px; font-weight: 600;
+  }
+  .deadline-green { background: var(--green-light); color: var(--green); }
+  .deadline-amber { background: var(--amber-light); color: var(--amber); }
+  .deadline-red { background: var(--red-light); color: var(--red); animation: pulse-red 1.5s infinite; }
+  @keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .amount-badge {
+    font-size: 12px; font-family: 'DM Mono', monospace; font-weight: 600;
+    color: var(--ink-3);
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(15,14,12,0.6); backdrop-filter: blur(4px);
+    z-index: 1000; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--paper);
+    border-radius: 14px; width: 100%; max-width: 680px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: modal-in 0.2s ease;
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-wide { max-width: 880px; }
+  .modal-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--paper-3);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--paper); z-index: 1;
+  }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--paper-2); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--ink-3); transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--red-light); color: var(--red); }
+  .modal-body { padding: 24px; }
+  .modal-footer {
+    padding: 16px 24px; border-top: 1px solid var(--paper-3);
+    display: flex; gap: 10px; justify-content: flex-end;
+    position: sticky; bottom: 0; background: var(--paper);
+  }
+
+  /* ── DETAIL SECTIONS ── */
+  .detail-section {
+    margin-bottom: 24px;
+  }
+  .detail-section-title {
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--paper-3);
+    font-family: 'DM Mono', monospace;
+  }
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .detail-field { }
+  .detail-field-label {
+    font-size: 11px; font-weight: 600; color: var(--ink-4);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    font-family: 'DM Mono', monospace; margin-bottom: 3px;
+  }
+  .detail-field-value { font-size: 14px; font-weight: 500; }
+
+  /* ── ACTIVITY LOG ── */
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+  .activity-item {
+    display: flex; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--paper-3);
+    align-items: flex-start;
+  }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0; margin-top: 5px;
+  }
+  .activity-text { font-size: 13.5px; flex: 1; }
+  .activity-text strong { color: var(--ink); }
+  .activity-time {
+    font-size: 11px; color: var(--ink-4);
+    font-family: 'DM Mono', monospace; flex-shrink: 0;
+  }
+
+  /* ── NOTE INPUT ── */
+  .note-input-wrap {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .note-input {
+    flex: 1; padding: 9px 12px;
+    border: 1.5px solid var(--paper-3);
+    border-radius: 8px; background: white;
+    font-family: 'DM Sans', sans-serif; font-size: 13.5px;
+    outline: none; resize: none;
+    min-height: 40px; color: var(--ink);
+  }
+  .note-input:focus { border-color: var(--accent); }
+
+  /* ── PAYMENT ── */
+  .payment-row {
+    display: flex; align-items: center; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--paper-3);
+  }
+  .payment-amount {
+    font-family: 'DM Mono', monospace; font-weight: 700; font-size: 16px;
+  }
+  .payment-detail { flex: 1; font-size: 13px; color: var(--ink-3); }
+  .payment-method {
+    font-size: 11px; background: var(--paper-2); padding: 2px 8px;
+    border-radius: 4px; font-family: 'DM Mono', monospace; color: var(--ink-4);
+  }
+  .balance-bar {
+    background: var(--paper-2); border-radius: 10px; padding: 16px;
+    display: flex; gap: 20px; margin-bottom: 16px;
+  }
+  .balance-item { flex: 1; text-align: center; }
+  .balance-value {
+    font-family: 'DM Mono', monospace; font-weight: 700; font-size: 20px;
+  }
+  .balance-label { font-size: 11px; color: var(--ink-4); margin-top: 3px; }
+
+  /* ── TEAM CARDS ── */
+  .team-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .team-card {
+    background: white; border-radius: var(--radius);
+    border: 1.5px solid var(--paper-3); padding: 20px;
+    transition: all 0.18s;
+  }
+  .team-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+  .team-card-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+  .team-avatar {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+    color: white; flex-shrink: 0;
+  }
+  .team-info { flex: 1; }
+  .team-name { font-weight: 700; font-size: 15px; }
+  .team-role {
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    color: var(--accent); font-weight: 600; margin-top: 2px;
+  }
+  .team-meta { display: flex; gap: 16px; }
+  .team-stat { text-align: center; flex: 1; }
+  .team-stat-value { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 18px; }
+  .team-stat-label { font-size: 11px; color: var(--ink-4); }
+  .team-status { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--paper-3); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .status-active { background: var(--green); }
+  .status-inactive { background: var(--ink-4); }
+
+  /* ── PERMISSIONS ── */
+  .permission-grid {
+    display: grid; grid-template-columns: 1fr repeat(6, auto);
+    gap: 0; overflow-x: auto;
+  }
+  .perm-header {
+    padding: 10px 14px; background: var(--paper-2);
+    font-size: 11px; font-weight: 600; text-align: center;
+    border-bottom: 1px solid var(--paper-3);
+    border-right: 1px solid var(--paper-3);
+    font-family: 'DM Mono', monospace; color: var(--ink-4);
+    white-space: nowrap;
+  }
+  .perm-header:first-child { text-align: left; }
+  .perm-cell {
+    padding: 10px 14px; border-bottom: 1px solid var(--paper-3);
+    border-right: 1px solid var(--paper-3); text-align: center;
+    font-size: 13px; display: flex; align-items: center; justify-content: center;
+  }
+  .perm-cell:first-child { text-align: left; justify-content: flex-start; font-weight: 500; }
+  .perm-check { color: var(--green); font-size: 15px; }
+  .perm-dash { color: var(--paper-3); font-size: 18px; }
+  .perm-partial { color: var(--amber); font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; }
+
+  /* ── INTEGRATIONS ── */
+  .integration-card {
+    background: white; border-radius: var(--radius);
+    border: 1.5px solid var(--paper-3); padding: 24px;
+    margin-bottom: 16px;
+  }
+  .integration-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+  }
+  .integration-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .integration-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+  .integration-sub { font-size: 13px; color: var(--ink-4); margin-top: 2px; }
+  .connected-indicator {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+  }
+  .toggle {
+    position: relative; width: 44px; height: 24px; cursor: pointer;
+  }
+  .toggle input { display: none; }
+  .toggle-track {
+    position: absolute; inset: 0; border-radius: 12px;
+    background: var(--paper-3); transition: 0.2s;
+  }
+  .toggle input:checked + .toggle-track { background: var(--green); }
+  .toggle-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: 0.2s;
+  }
+  .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+  /* ── NOTIFICATIONS ── */
+  .notif-list { display: flex; flex-direction: column; gap: 2px; }
+  .notif-item {
+    display: flex; gap: 12px; padding: 14px 16px;
+    border-radius: 8px; cursor: pointer; transition: all 0.15s;
+    border: 1.5px solid transparent;
+  }
+  .notif-item:hover { background: var(--paper-2); }
+  .notif-item.unread {
+    background: var(--accent-light);
+    border-color: rgba(232,82,26,0.2);
+  }
+  .notif-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .notif-content { flex: 1; }
+  .notif-title { font-weight: 600; font-size: 13.5px; }
+  .notif-body { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+  .notif-time { font-size: 11px; color: var(--ink-4); font-family: 'DM Mono', monospace; margin-top: 4px; }
+
+  /* ── SETTINGS ── */
+  .settings-section {
+    background: white; border-radius: var(--radius);
+    border: 1.5px solid var(--paper-3); margin-bottom: 20px;
+  }
+  .settings-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid var(--paper-3);
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-label { font-weight: 500; font-size: 14px; }
+  .settings-desc { font-size: 12px; color: var(--ink-4); margin-top: 2px; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-title {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+  }
+  .page-sub { font-size: 13.5px; color: var(--ink-4); margin-top: 3px; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center; padding: 48px 24px; color: var(--ink-4);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink-3); }
+  .empty-sub { font-size: 13px; margin-top: 4px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1200px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .dashboard-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--paper-2); }
+  ::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+
+  /* ── MISC ── */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .ml-auto { margin-left: auto; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .text-muted { color: var(--ink-4); }
+  .text-sm { font-size: 12px; }
+  .font-mono { font-family: 'DM Mono', monospace; }
+  .font-bold { font-weight: 700; }
+  hr { border: none; border-top: 1px solid var(--paper-3); margin: 16px 0; }
+  .tag { background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: 5px; padding: 2px 8px; font-size: 12px; color: var(--ink-3); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN PAGE ═══════════ -->
+<div id="login-page">
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="login-brand-icon">🖨</div>
+      <div class="login-brand-name">Print<span>CRM</span></div>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Sign in to your workspace</div>
+    <div class="form-group">
+      <label class="form-label">Phone or Email</label>
+      <input class="form-input" type="text" placeholder="rahul@printco.in" value="owner@printcrm.in">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" placeholder="••••••••" value="password">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()" style="margin-top:8px; padding:13px;">
+      Sign In →
+    </button>
+    <div style="margin-top:16px; text-align:center;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+        <span class="tag" onclick="setRole('owner')" style="cursor:pointer">👑 Owner</span>
+        <span class="tag" onclick="setRole('manager')" style="cursor:pointer">📊 Manager</span>
+        <span class="tag" onclick="setRole('sales')" style="cursor:pointer">💼 Sales</span>
+        <span class="tag" onclick="setRole('production')" style="cursor:pointer">⚙️ Production</span>
+      </div>
+      <div class="text-muted text-sm" style="margin-top:8px">Click a role above to preview that role's view</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ APP SHELL ═══════════ -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🖨</div>
+      <div class="sidebar-logo-text">Print<span>CRM</span></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sb-username">Arjun Mehta</div>
+      <div class="sidebar-user-role" id="sb-userrole">Owner</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="navTo('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="navTo('leads')">
+        <span class="nav-icon">🎯</span> Leads
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" onclick="navTo('orders')">
+        <span class="nav-icon">📦</span> Orders
+        <span class="nav-badge" style="background:var(--amber)">3</span>
+      </div>
+      <div class="nav-item" onclick="navTo('customers')">
+        <span class="nav-icon">👥</span> Customers
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" onclick="navTo('payments')">
+        <span class="nav-icon">💰</span> Payments
+      </div>
+      <div class="nav-section">Admin</div>
+      <div class="nav-item" onclick="navTo('team')">
+        <span class="nav-icon">🧑‍🤝‍🧑</span> Team
+      </div>
+      <div class="nav-item" onclick="navTo('permissions')">
+        <span class="nav-icon">🔐</span> Permissions
+      </div>
+      <div class="nav-item" onclick="navTo('integrations')">
+        <span class="nav-icon">🔗</span> Integrations
+      </div>
+      <div class="nav-item" onclick="navTo('notifications')">
+        <span class="nav-icon">🔔</span> Notifications
+        <span class="nav-badge">5</span>
+      </div>
+      <div class="nav-item" onclick="navTo('settings')">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-logout" onclick="doLogout()">
+        <span>↩</span> Sign Out
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Search leads, orders, customers…">
+      </div>
+      <div class="notif-btn" onclick="navTo('notifications')">
+        🔔
+        <span class="notif-dot"></span>
+      </div>
+      <div class="avatar" onclick="navTo('settings')">AM</div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ PAGE: DASHBOARD ══ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Good morning, Arjun 👋</div>
+            <div class="page-sub">Here's what's happening at PrintCo today — Friday, 29 May 2026</div>
+          </div>
+          <div class="flex gap-8">
+            <select class="filter-select">
+              <option>Today</option>
+              <option>This Week</option>
+              <option selected>This Month</option>
+              <option>Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card accent">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-label">Total Leads</div>
+            <div class="stat-value">47</div>
+            <div class="stat-sub">+8 this week</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">📦</div>
+            <div class="stat-label">Active Orders</div>
+            <div class="stat-value">23</div>
+            <div class="stat-sub">4 due today</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Revenue (Month)</div>
+            <div class="stat-value">₹1.4L</div>
+            <div class="stat-sub">₹18k outstanding</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-label">Overdue Orders</div>
+            <div class="stat-value">3</div>
+            <div class="stat-sub">Needs attention</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-3">
+          <!-- Lead Temp -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Leads by Temperature</div>
+            </div>
+            <div class="card-body">
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="badge badge-hot">HOT</span>
+                  <div style="flex:1;background:var(--paper-3);border-radius:4px;height:8px;">
+                    <div style="width:35%;height:8px;background:var(--accent);border-radius:4px;"></div>
+                  </div>
+                  <span class="font-mono" style="font-size:13px;font-weight:700;width:24px;">7</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="badge badge-warm">WARM</span>
+                  <div style="flex:1;background:var(--paper-3);border-radius:4px;height:8px;">
+                    <div style="width:55%;height:8px;background:var(--amber);border-radius:4px;"></div>
+                  </div>
+                  <span class="font-mono" style="font-size:13px;font-weight:700;width:24px;">14</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="badge badge-cold">COLD</span>
+                  <div style="flex:1;background:var(--paper-3);border-radius:4px;height:8px;">
+                    <div style="width:70%;height:8px;background:var(--blue);border-radius:4px;"></div>
+                  </div>
+                  <span class="font-mono" style="font-size:13px;font-weight:700;width:24px;">20</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="badge badge-general">GENERAL</span>
+                  <div style="flex:1;background:var(--paper-3);border-radius:4px;height:8px;">
+                    <div style="width:25%;height:8px;background:var(--ink-4);border-radius:4px;"></div>
+                  </div>
+                  <span class="font-mono" style="font-size:13px;font-weight:700;width:24px;">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Breakdown -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Revenue by Product</div>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;">
+                  <span>🖼 Banners</span><span class="font-mono font-bold">₹48,000</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;">
+                  <span>☕ Cups / Mugs</span><span class="font-mono font-bold">₹36,500</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;">
+                  <span>🪪 Visiting Cards</span><span class="font-mono font-bold">₹22,000</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;">
+                  <span>🏷 Stickers</span><span class="font-mono font-bold">₹18,200</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;">
+                  <span>📄 Others</span><span class="font-mono font-bold">₹15,300</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Payment Summary</div></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="padding:12px;background:var(--green-light);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:var(--green);font-weight:600;">Collected</span>
+                  <span class="font-mono font-bold" style="color:var(--green);">₹1,22,000</span>
+                </div>
+                <div style="padding:12px;background:var(--red-light);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:var(--red);font-weight:600;">Outstanding</span>
+                  <span class="font-mono font-bold" style="color:var(--red);">₹18,000</span>
+                </div>
+                <div style="padding:12px;background:var(--amber-light);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:var(--amber);font-weight:600;">Advance</span>
+                  <span class="font-mono font-bold" style="color:var(--amber);">₹9,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Recent Leads -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent Leads</div>
+              <button class="btn btn-sm btn-secondary" onclick="navTo('leads')">View All</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>Customer</th><th>Product</th><th>Temp</th><th>Source</th><th>Time</th>
+                </tr></thead>
+                <tbody>
+                  <tr><td><div class="td-name">Sunita Bose</div><div class="td-sub">+91 98765 43210</div></td><td>Visiting Cards × 500</td><td><span class="badge badge-hot">HOT</span></td><td><span class="lead-source">Meta Ad</span></td><td class="text-muted font-mono text-sm">2:30 PM</td></tr>
+                  <tr><td><div class="td-name">Rajesh Kumar</div><div class="td-sub">+91 87654 32109</div></td><td>Banners × 3</td><td><span class="badge badge-warm">WARM</span></td><td><span class="lead-source">WhatsApp</span></td><td class="text-muted font-mono text-sm">1:15 PM</td></tr>
+                  <tr><td><div class="td-name">Meena Shah</div><div class="td-sub">+91 76543 21098</div></td><td>Mugs × 100</td><td><span class="badge badge-cold">COLD</span></td><td><span class="lead-source">Meta Ad</span></td><td class="text-muted font-mono text-sm">11:40 AM</td></tr>
+                  <tr><td><div class="td-name">Anil Verma</div><div class="td-sub">+91 65432 10987</div></td><td>Stickers × 200</td><td><span class="badge badge-warm">WARM</span></td><td><span class="lead-source">Walk-in</span></td><td class="text-muted font-mono text-sm">10:20 AM</td></tr>
+                  <tr><td><div class="td-name">Pooja Nair</div><div class="td-sub">+91 54321 09876</div></td><td>Business Cards × 1000</td><td><span class="badge badge-hot">HOT</span></td><td><span class="lead-source">Referral</span></td><td class="text-muted font-mono text-sm">9:05 AM</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Overdue + Activity -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">🚨 Overdue Orders</div>
+                <span class="badge badge-red">3 Orders</span>
+              </div>
+              <div class="card-body" style="padding:12px 16px;">
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div style="padding:10px;background:var(--red-light);border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="openOrderDetail()">
+                    <span>📦</span>
+                    <div style="flex:1;">
+                      <div style="font-weight:600;font-size:13.5px;">Order #1038 — Vikram Joshi</div>
+                      <div style="font-size:12px;color:var(--ink-3);">Banner × 5 · 2 days overdue</div>
+                    </div>
+                    <span class="deadline-badge deadline-red">-2d</span>
+                  </div>
+                  <div style="padding:10px;background:var(--red-light);border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="openOrderDetail()">
+                    <span>📦</span>
+                    <div style="flex:1;">
+                      <div style="font-weight:600;font-size:13.5px;">Order #1035 — Ananya Patel</div>
+                      <div style="font-size:12px;color:var(--ink-3);">Visiting Cards × 500 · 1 day overdue</div>
+                    </div>
+                    <span class="deadline-badge deadline-red">-1d</span>
+                  </div>
+                  <div style="padding:10px;background:var(--amber-light);border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="openOrderDetail()">
+                    <span>📦</span>
+                    <div style="flex:1;">
+                      <div style="font-weight:600;font-size:13.5px;">Order #1040 — Sanjay Gupta</div>
+                      <div style="font-size:12px;color:var(--ink-3);">Mugs × 50 · Due today</div>
+                    </div>
+                    <span class="deadline-badge deadline-amber">Today</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Team Activity Feed</div>
+              </div>
+              <div class="card-body" style="padding:0 16px;">
+                <div class="activity-list">
+                  <div class="activity-item">
+                    <div class="activity-dot"></div>
+                    <div class="activity-text"><strong>Rahul</strong> moved Order #1042 to In Production</div>
+                    <div class="activity-time">2:30 PM</div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="activity-dot" style="background:var(--green)"></div>
+                    <div class="activity-text"><strong>Priya</strong> added note on Lead #205</div>
+                    <div class="activity-time">4:00 PM</div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="activity-dot" style="background:var(--amber)"></div>
+                    <div class="activity-text"><strong>Amit</strong> recorded ₹1,000 payment on #1042</div>
+                    <div class="activity-time">5:15 PM</div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="activity-dot" style="background:var(--blue)"></div>
+                    <div class="activity-text"><strong>Sunita</strong> converted Lead #203 to Order</div>
+                    <div class="activity-time">Yesterday</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: LEADS ══ -->
+      <div class="page" id="page-leads">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Leads</div>
+            <div class="page-sub">47 total leads · 7 hot · 12 new today</div>
+          </div>
+          <button class="btn btn-primary" onclick="openAddLead()">+ Add Lead</button>
+        </div>
+
+        <div class="filters-bar">
+          <div class="filter-pill active">All (47)</div>
+          <div class="filter-pill">🔥 Hot (7)</div>
+          <div class="filter-pill">🌡 Warm (14)</div>
+          <div class="filter-pill">❄️ Cold (20)</div>
+          <div class="filter-pill">❓ General (6)</div>
+          <div style="flex:1;"></div>
+          <select class="filter-select">
+            <option>All Sources</option>
+            <option>Meta Ads</option>
+            <option>WhatsApp</option>
+            <option>Walk-in</option>
+            <option>Referral</option>
+          </select>
+          <select class="filter-select">
+            <option>All Members</option>
+            <option>Rahul</option>
+            <option>Priya</option>
+            <option>Amit</option>
+          </select>
+          <input class="form-input" style="width:180px;padding:7px 12px;" type="text" placeholder="Search leads…">
+        </div>
+
+        <div class="leads-grid">
+          <!-- Lead Cards -->
+          <div class="lead-card" onclick="openLeadDetail()">
+            <div class="lead-card-top">
+              <div>
+                <div class="lead-name">Sunita Bose</div>
+                <div class="lead-phone">+91 98765 43210</div>
+              </div>
+              <span class="badge badge-hot">HOT</span>
+            </div>
+            <div class="lead-product"><strong>Visiting Cards</strong> × 500 pcs</div>
+            <div class="lead-meta">
+              <span class="lead-source">📘 Meta Ad</span>
+              <span class="lead-assigned"><div class="avatar-xs">RK</div> Rahul</span>
+              <span class="text-muted text-sm" style="margin-left:auto">2h ago</span>
+            </div>
+            <div class="lead-actions">
+              <button class="lead-action-btn">📱 WhatsApp</button>
+              <button class="lead-action-btn">📞 Call</button>
+              <button class="lead-action-btn">📝 Note</button>
+            </div>
+          </div>
+
+          <div class="lead-card" onclick="openLeadDetail()">
+            <div class="lead-card-top">
+              <div>
+                <div class="lead-name">Rajesh Kumar</div>
+                <div class="lead-phone">+91 87654 32109</div>
+              </div>
+              <span class="badge badge-warm">WARM</span>
+            </div>
+            <div class="lead-product"><strong>Flex Banners</strong> × 3 pieces, 6×4 ft</div>
+            <div class="lead-meta">
+              <span class="lead-source">💬 WhatsApp</span>
+              <span class="lead-assigned"><div class="avatar-xs" style="background:var(--green)">PD</div> Priya</span>
+              <span class="text-muted text-sm" style="margin-left:auto">3h ago</span>
+            </div>
+            <div class="lead-actions">
+              <button class="lead-action-btn">📱 WhatsApp</button>
+              <button class="lead-action-btn">📞 Call</button>
+              <button class="lead-action-btn">📝 Note</button>
+            </div>
+          </div>
+
+          <div class="lead-card" onclick="openLeadDetail()">
+            <div class="lead-card-top">
+              <div>
+                <div class="lead-name">Meena Shah</div>
+                <div class="lead-phone">+91 76543 21098</div>
+              </div>
+              <span class="badge badge-cold">COLD</span>
+            </div>
+            <div class="lead-product"><strong>Printed Mugs</strong> × 100 pcs (corporate gift)</div>
+            <div class="lead-meta">
+              <span class="lead-source">📘 Meta Ad</span>
+              <span class="lead-assigned"><div class="avatar-xs" style="background:var(--amber)">AS</div> Amit</span>
+              <span class="text-muted text-sm" style="margin-left:auto">5h ago</span>
+            </div>
+            <div class="lead-actions">
+              <button class="lead-action-btn">📱 WhatsApp</button>
+              <button class="lead-action-btn">📞 Call</button>
+              <button class="lead-action-btn">📝 Note</button>
+            </div>
+          </div>
+
+          <div class="lead-card" onclick="openLeadDetail()">
+            <div class="lead-card-top">
+              <div>
+                <div class="lead-name">Anil Verma</div>
+                <div class="lead-phone">+91 65432 10987</div>
+              </div>
+              <span class="badge badge-warm">WARM</span>
+            </div>
+            <div class="lead-product"><strong>Custom Stickers</strong> × 200 pcs, die-cut</div>
+            <div class="lead-meta">
+              <span class="lead-source">🚶 Walk-in</span>
+              <span class="lead-assigned"><div class="avatar-xs">RK</div> Rahul</span>
+              <span class="text-muted text-sm" style="margin-left:auto">Today 10 AM</span>
+            </div>
+            <div class="lead-actions">
+              <button class="lead-action-btn">📱 WhatsApp</button>
+              <button class="lead-action-btn">📞 Call</button>
+              <button class="lead-action-btn">📝 Note</button>
+            </div>
+          </div>
+
+          <div class="lead-card" onclick="openLeadDetail()">
+            <div class="lead-card-top">
+              <div>
+                <div class="lead-name">Pooja Nair</div>
+                <div class="lead-phone">+91 54321 09876</div>
+              </div>
+              <span class="badge badge-hot">HOT</span>
+            </div>
+            <div class="lead-product"><strong>Business Cards</strong> × 1000 pcs, premium matte</div>
+            <div class="lead-meta">
+              <span class="lead-source">👥 Referral</span>
+              <span class="lead-assigned"><div class="avatar-xs" style="background:var(--green)">PD</div> Priya</span>
+              <span class="text-muted text-sm" style="margin-left:auto">Yesterday</span>
+            </div>
+            <div class="lead-actions">
+              <button class="lead-action-btn">📱 WhatsApp</button>
+              <button class="lead-action-btn">📞 Call</button>
+              <button class="lead-action-btn">📝 Note</button>
+            </div>
+          </div>
+
+          <div class="lead-card" onclick="openLeadDetail()">
+            <div class="lead-card-top">
+              <div>
+                <div class="lead-name">Vikram Desai</div>
+                <div class="lead-phone">+91 43210 98765</div>
+              </div>
+              <span class="badge badge-general">GENERAL</span>
+            </div>
+            <div class="lead-product"><strong>Enquiry</strong> — Not specified yet</div>
+            <div class="lead-meta">
+              <span class="lead-source">💬 WhatsApp</span>
+              <span class="lead-assigned"><div class="avatar-xs" style="background:var(--amber)">AS</div> Amit</span>
+              <span class="text-muted text-sm" style="margin-left:auto">Yesterday</span>
+            </div>
+            <div class="lead-actions">
+              <button class="lead-action-btn">📱 WhatsApp</button>
+              <button class="lead-action-btn">📞 Call</button>
+              <button class="lead-action-btn">📝 Note</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: ORDERS (KANBAN) ══ -->
+      <div class="page" id="page-orders">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Order Pipeline</div>
+            <div class="page-sub">23 active orders across 7 stages</div>
+          </div>
+          <div class="flex gap-8">
+            <select class="filter-select">
+              <option>All Members</option>
+              <option>Rahul</option>
+              <option>Priya</option>
+            </select>
+            <button class="btn btn-primary" onclick="openAddOrder()">+ New Order</button>
+          </div>
+        </div>
+
+        <div class="kanban">
+          <!-- Stage 1 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:#6a1ac4"></div>
+              <div class="kanban-col-name">New / Confirmed</div>
+              <div class="kanban-col-count">4</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Pooja Nair</div>
+                <div class="kanban-card-product">Business Cards × 1000</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-green">5d left</span>
+                  <span class="amount-badge">₹3,500</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Anil Verma</div>
+                <div class="kanban-card-product">Custom Stickers × 200</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-amber">2d left</span>
+                  <span class="amount-badge">₹1,800</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 2 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:var(--blue)"></div>
+              <div class="kanban-col-name">Quoted</div>
+              <div class="kanban-col-count">3</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Sunita Bose</div>
+                <div class="kanban-card-product">Visiting Cards × 500</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-green">6d left</span>
+                  <span class="amount-badge">₹1,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 3 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:var(--amber)"></div>
+              <div class="kanban-col-name">In Production</div>
+              <div class="kanban-col-count">6</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Rajesh Kumar</div>
+                <div class="kanban-card-product">Flex Banners × 3</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-red">Overdue</span>
+                  <span class="amount-badge">₹4,200</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Meena Shah</div>
+                <div class="kanban-card-product">Printed Mugs × 100</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-amber">Today</span>
+                  <span class="amount-badge">₹12,000</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Kiran Reddy</div>
+                <div class="kanban-card-product">T-Shirt Print × 50</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-green">3d left</span>
+                  <span class="amount-badge">₹8,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 4 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:var(--accent)"></div>
+              <div class="kanban-col-name">Quality Check</div>
+              <div class="kanban-col-count">3</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Deepak Sharma</div>
+                <div class="kanban-card-product">Standees × 2</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-green">4d left</span>
+                  <span class="amount-badge">₹2,800</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 5 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:#1a7a4a"></div>
+              <div class="kanban-col-name">Ready</div>
+              <div class="kanban-col-count">4</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Ananya Patel</div>
+                <div class="kanban-card-product">Visiting Cards × 500</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-red">-1d</span>
+                  <span class="amount-badge">₹1,200</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Sanjay Gupta</div>
+                <div class="kanban-card-product">Mugs × 50</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-amber">Today</span>
+                  <span class="amount-badge">₹6,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 6 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:var(--blue)"></div>
+              <div class="kanban-col-name">Out for Delivery</div>
+              <div class="kanban-col-count">2</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Preethi Iyer</div>
+                <div class="kanban-card-product">Brochures × 250</div>
+                <div class="kanban-card-footer">
+                  <span class="deadline-badge deadline-green">On time</span>
+                  <span class="amount-badge">₹3,800</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 7 -->
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <div class="kanban-col-dot" style="background:var(--ink-4)"></div>
+              <div class="kanban-col-name">Delivered ✓</div>
+              <div class="kanban-col-count">18</div>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Vikram Joshi</div>
+                <div class="kanban-card-product">Banner × 5</div>
+                <div class="kanban-card-footer">
+                  <span style="font-size:11px;color:var(--ink-4);">28 May</span>
+                  <span class="amount-badge">₹7,000</span>
+                </div>
+              </div>
+              <div class="kanban-card" onclick="openOrderDetail()">
+                <div class="kanban-card-name">Rohit Singh</div>
+                <div class="kanban-card-product">Mugs × 24</div>
+                <div class="kanban-card-footer">
+                  <span style="font-size:11px;color:var(--ink-4);">27 May</span>
+                  <span class="amount-badge">₹4,200</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: CUSTOMERS ══ -->
+      <div class="page" id="page-customers">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Customers</div>
+            <div class="page-sub">134 total customers · 12 VIP · 8 with outstanding balance</div>
+          </div>
+          <div class="flex gap-8">
+            <input class="form-input" style="width:200px;" type="text" placeholder="Search name or phone…">
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <div class="filter-pill active">All (134)</div>
+          <div class="filter-pill">⭐ VIP (12)</div>
+          <div class="filter-pill">⚠️ Outstanding (8)</div>
+          <div class="filter-pill">💤 Inactive (23)</div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Customer</th><th>Orders</th><th>Lifetime Value</th><th>Outstanding</th><th>Last Order</th><th>Source</th><th>Status</th><th>Action</th>
+              </tr></thead>
+              <tbody>
+                <tr onclick="openCustomerDetail()" style="cursor:pointer">
+                  <td><div class="td-name">Pooja Nair</div><div class="td-sub">+91 54321 09876</div></td>
+                  <td><span class="font-mono font-bold">8</span></td>
+                  <td><span class="font-mono font-bold">₹42,500</span></td>
+                  <td><span class="badge badge-green">None</span></td>
+                  <td class="text-muted font-mono text-sm">29 May 2026</td>
+                  <td><span class="lead-source">Referral</span></td>
+                  <td><span class="badge badge-green">VIP ⭐</span></td>
+                  <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();openCustomerDetail()">View</button></td>
+                </tr>
+                <tr onclick="openCustomerDetail()" style="cursor:pointer">
+                  <td><div class="td-name">Rajesh Kumar</div><div class="td-sub">+91 87654 32109</div></td>
+                  <td><span class="font-mono font-bold">5</span></td>
+                  <td><span class="font-mono font-bold">₹28,000</span></td>
+                  <td><span class="badge badge-amber">₹3,500</span></td>
+                  <td class="text-muted font-mono text-sm">28 May 2026</td>
+                  <td><span class="lead-source">WhatsApp</span></td>
+                  <td><span class="badge badge-amber">Active</span></td>
+                  <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();openCustomerDetail()">View</button></td>
+                </tr>
+                <tr onclick="openCustomerDetail()" style="cursor:pointer">
+                  <td><div class="td-name">Meena Shah</div><div class="td-sub">+91 76543 21098</div></td>
+                  <td><span class="font-mono font-bold">12</span></td>
+                  <td><span class="font-mono font-bold">₹65,200</span></td>
+                  <td><span class="badge badge-green">None</span></td>
+                  <td class="text-muted font-mono text-sm">25 May 2026</td>
+                  <td><span class="lead-source">Meta Ad</span></td>
+                  <td><span class="badge badge-green">VIP ⭐</span></td>
+                  <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();openCustomerDetail()">View</button></td>
+                </tr>
+                <tr onclick="openCustomerDetail()" style="cursor:pointer">
+                  <td><div class="td-name">Anil Verma</div><div class="td-sub">+91 65432 10987</div></td>
+                  <td><span class="font-mono font-bold">2</span></td>
+                  <td><span class="font-mono font-bold">₹5,400</span></td>
+                  <td><span class="badge badge-red">₹2,000</span></td>
+                  <td class="text-muted font-mono text-sm">20 May 2026</td>
+                  <td><span class="lead-source">Walk-in</span></td>
+                  <td><span class="badge badge-red">Outstanding ⚠️</span></td>
+                  <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();openCustomerDetail()">View</button></td>
+                </tr>
+                <tr onclick="openCustomerDetail()" style="cursor:pointer">
+                  <td><div class="td-name">Sunita Bose</div><div class="td-sub">+91 98765 43210</div></td>
+                  <td><span class="font-mono font-bold">1</span></td>
+                  <td><span class="font-mono font-bold">₹1,500</span></td>
+                  <td><span class="badge badge-green">None</span></td>
+                  <td class="text-muted font-mono text-sm">29 May 2026</td>
+                  <td><span class="lead-source">Meta Ad</span></td>
+                  <td><span class="badge badge-ink">New</span></td>
+                  <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();openCustomerDetail()">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: PAYMENTS ══ -->
+      <div class="page" id="page-payments">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Payment Tracking</div>
+            <div class="page-sub">Financial overview and transaction records</div>
+          </div>
+          <div class="flex gap-8">
+            <select class="filter-select">
+              <option>This Month</option>
+              <option>This Week</option>
+              <option>Today</option>
+              <option>Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+          <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Total Collected</div>
+            <div class="stat-value">₹1.22L</div>
+            <div class="stat-sub">This month</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value">₹18,000</div>
+            <div class="stat-sub">8 customers</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-icon">💳</div>
+            <div class="stat-label">Advance Received</div>
+            <div class="stat-value">₹9,500</div>
+            <div class="stat-sub">5 orders</div>
+          </div>
+          <div class="stat-card accent">
+            <div class="stat-icon">📊</div>
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">₹1.40L</div>
+            <div class="stat-sub">May 2026</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Recent Transactions -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent Transactions</div>
+              <button class="btn btn-sm btn-primary" onclick="openAddPayment()">+ Record Payment</button>
+            </div>
+            <div class="card-body" style="padding:0;">
+              <div style="padding:0 16px;">
+                <div class="payment-row">
+                  <div>
+                    <div class="payment-amount" style="color:var(--green)">+₹5,000</div>
+                    <div class="text-muted text-sm font-mono">29 May · UPI · #TXN8821</div>
+                  </div>
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Meena Shah — Order #1042</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Recorded by: Rahul</div>
+                  </div>
+                  <span class="payment-method">UPI</span>
+                </div>
+                <div class="payment-row">
+                  <div>
+                    <div class="payment-amount" style="color:var(--green)">+₹1,000</div>
+                    <div class="text-muted text-sm font-mono">29 May · Cash</div>
+                  </div>
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Anil Verma — Order #1038</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Recorded by: Priya</div>
+                  </div>
+                  <span class="payment-method">Cash</span>
+                </div>
+                <div class="payment-row">
+                  <div>
+                    <div class="payment-amount" style="color:var(--green)">+₹7,200</div>
+                    <div class="text-muted text-sm font-mono">28 May · Bank Transfer</div>
+                  </div>
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Pooja Nair — Order #1035</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Recorded by: Amit</div>
+                  </div>
+                  <span class="payment-method">Bank</span>
+                </div>
+                <div class="payment-row">
+                  <div>
+                    <div class="payment-amount" style="color:var(--amber)">+₹2,000</div>
+                    <div class="text-muted text-sm font-mono">28 May · UPI · Advance</div>
+                  </div>
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Rajesh Kumar — Order #1040</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Recorded by: Rahul</div>
+                  </div>
+                  <span class="payment-method">UPI</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method + Outstanding -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Payment Methods</div></div>
+              <div class="card-body">
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;">
+                    <span style="width:80px;">UPI</span>
+                    <div style="flex:1;background:var(--paper-3);border-radius:4px;height:10px;">
+                      <div style="width:62%;height:10px;background:var(--accent);border-radius:4px;"></div>
+                    </div>
+                    <span class="font-mono font-bold">62%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;">
+                    <span style="width:80px;">Cash</span>
+                    <div style="flex:1;background:var(--paper-3);border-radius:4px;height:10px;">
+                      <div style="width:24%;height:10px;background:var(--green);border-radius:4px;"></div>
+                    </div>
+                    <span class="font-mono font-bold">24%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;">
+                    <span style="width:80px;">Bank</span>
+                    <div style="flex:1;background:var(--paper-3);border-radius:4px;height:10px;">
+                      <div style="width:10%;height:10px;background:var(--blue);border-radius:4px;"></div>
+                    </div>
+                    <span class="font-mono font-bold">10%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;">
+                    <span style="width:80px;">Cheque</span>
+                    <div style="flex:1;background:var(--paper-3);border-radius:4px;height:10px;">
+                      <div style="width:4%;height:10px;background:var(--purple);border-radius:4px;"></div>
+                    </div>
+                    <span class="font-mono font-bold">4%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><div class="card-title">⚠️ Outstanding Balances</div></div>
+              <div class="card-body" style="padding:0 16px;">
+                <div class="payment-row">
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Rajesh Kumar</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Order #1040</div>
+                  </div>
+                  <div class="payment-amount" style="color:var(--red);">₹3,500</div>
+                </div>
+                <div class="payment-row">
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Anil Verma</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Order #1038</div>
+                  </div>
+                  <div class="payment-amount" style="color:var(--red);">₹2,000</div>
+                </div>
+                <div class="payment-row">
+                  <div class="payment-detail">
+                    <div style="font-weight:500;">Sanjay Gupta</div>
+                    <div style="font-size:12px;color:var(--ink-4);">Order #1041</div>
+                  </div>
+                  <div class="payment-amount" style="color:var(--red);">₹6,500</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: TEAM ══ -->
+      <div class="page" id="page-team">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Team Management</div>
+            <div class="page-sub">6 active members · 1 inactive</div>
+          </div>
+          <button class="btn btn-primary" onclick="openAddTeam()">+ Add Member</button>
+        </div>
+
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-card-top">
+              <div class="team-avatar" style="background:var(--accent)">AM</div>
+              <div class="team-info">
+                <div class="team-name">Arjun Mehta</div>
+                <div class="team-role">OWNER</div>
+                <div class="text-muted text-sm" style="margin-top:4px">arjun@printco.in</div>
+              </div>
+            </div>
+            <div class="team-meta">
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--accent)">47</div><div class="team-stat-label">Leads</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--green)">23</div><div class="team-stat-label">Orders</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--blue)">₹1.4L</div><div class="team-stat-label">Revenue</div></div>
+            </div>
+            <div class="team-status"><div class="status-dot status-active"></div><span>Active · Joined Jan 2025</span><button class="btn btn-sm btn-ghost" style="margin-left:auto;">Edit</button></div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-card-top">
+              <div class="team-avatar" style="background:var(--green)">RK</div>
+              <div class="team-info">
+                <div class="team-name">Rahul Khanna</div>
+                <div class="team-role">SALES AGENT</div>
+                <div class="text-muted text-sm" style="margin-top:4px">+91 98001 12345</div>
+              </div>
+            </div>
+            <div class="team-meta">
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--accent)">18</div><div class="team-stat-label">Leads</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--green)">9</div><div class="team-stat-label">Orders</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--blue)">₹42k</div><div class="team-stat-label">Sales</div></div>
+            </div>
+            <div class="team-status"><div class="status-dot status-active"></div><span>Active · Joined Mar 2025</span><button class="btn btn-sm btn-ghost" style="margin-left:auto;">Edit</button></div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-card-top">
+              <div class="team-avatar" style="background:var(--purple)">PD</div>
+              <div class="team-info">
+                <div class="team-name">Priya Desai</div>
+                <div class="team-role">MANAGER</div>
+                <div class="text-muted text-sm" style="margin-top:4px">+91 97002 23456</div>
+              </div>
+            </div>
+            <div class="team-meta">
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--accent)">22</div><div class="team-stat-label">Leads</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--green)">11</div><div class="team-stat-label">Orders</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--blue)">₹58k</div><div class="team-stat-label">Sales</div></div>
+            </div>
+            <div class="team-status"><div class="status-dot status-active"></div><span>Active · Joined Feb 2025</span><button class="btn btn-sm btn-ghost" style="margin-left:auto;">Edit</button></div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-card-top">
+              <div class="team-avatar" style="background:var(--amber)">AS</div>
+              <div class="team-info">
+                <div class="team-name">Amit Singh</div>
+                <div class="team-role">PRODUCTION</div>
+                <div class="text-muted text-sm" style="margin-top:4px">+91 96003 34567</div>
+              </div>
+            </div>
+            <div class="team-meta">
+              <div class="team-stat"><div class="team-stat-value">—</div><div class="team-stat-label">Leads</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--green)">16</div><div class="team-stat-label">Orders</div></div>
+              <div class="team-stat"><div class="team-stat-value">—</div><div class="team-stat-label">Revenue</div></div>
+            </div>
+            <div class="team-status"><div class="status-dot status-active"></div><span>Active · Joined Apr 2025</span><button class="btn btn-sm btn-ghost" style="margin-left:auto;">Edit</button></div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-card-top">
+              <div class="team-avatar" style="background:var(--blue)">NJ</div>
+              <div class="team-info">
+                <div class="team-name">Neha Joshi</div>
+                <div class="team-role">DELIVERY</div>
+                <div class="text-muted text-sm" style="margin-top:4px">+91 95004 45678</div>
+              </div>
+            </div>
+            <div class="team-meta">
+              <div class="team-stat"><div class="team-stat-value">—</div><div class="team-stat-label">Leads</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--green)">28</div><div class="team-stat-label">Delivered</div></div>
+              <div class="team-stat"><div class="team-stat-value">—</div><div class="team-stat-label">Revenue</div></div>
+            </div>
+            <div class="team-status"><div class="status-dot status-active"></div><span>Active · Joined May 2025</span><button class="btn btn-sm btn-ghost" style="margin-left:auto;">Edit</button></div>
+          </div>
+
+          <div class="team-card" style="opacity:0.65;">
+            <div class="team-card-top">
+              <div class="team-avatar" style="background:var(--ink-4)">VR</div>
+              <div class="team-info">
+                <div class="team-name">Vikash Rao</div>
+                <div class="team-role">ACCOUNTANT</div>
+                <div class="text-muted text-sm" style="margin-top:4px">+91 94005 56789</div>
+              </div>
+            </div>
+            <div class="team-meta">
+              <div class="team-stat"><div class="team-stat-value">—</div><div class="team-stat-label">Leads</div></div>
+              <div class="team-stat"><div class="team-stat-value">—</div><div class="team-stat-label">Orders</div></div>
+              <div class="team-stat"><div class="team-stat-value" style="color:var(--blue)">Full</div><div class="team-stat-label">Finance</div></div>
+            </div>
+            <div class="team-status"><div class="status-dot status-inactive"></div><span>Inactive</span><button class="btn btn-sm btn-success" style="margin-left:auto;font-size:11px;padding:4px 10px;">Reactivate</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: PERMISSIONS ══ -->
+      <div class="page" id="page-permissions">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Roles & Permissions</div>
+            <div class="page-sub">Default role permissions and custom overrides</div>
+          </div>
+        </div>
+
+        <div class="card mb-16">
+          <div class="card-header"><div class="card-title">Permission Matrix</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Module</th>
+                <th style="text-align:center">Owner</th>
+                <th style="text-align:center">Manager</th>
+                <th style="text-align:center">Sales</th>
+                <th style="text-align:center">Production</th>
+                <th style="text-align:center">Delivery</th>
+                <th style="text-align:center">Accountant</th>
+              </tr></thead>
+              <tbody>
+                <tr><td><strong>Dashboard</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-amber">Limited</span></td><td style="text-align:center"><span class="badge badge-amber">Limited</span></td><td style="text-align:center"><span class="badge badge-amber">Limited</span></td><td style="text-align:center"><span class="badge badge-blue">Finance</span></td></tr>
+                <tr><td><strong>Leads</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-ink">View</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td></tr>
+                <tr><td><strong>Orders</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-ink">View</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-amber">Status</span></td><td style="text-align:center"><span class="badge badge-ink">View</span></td></tr>
+                <tr><td><strong>Customers</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-ink">View</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-ink">View</span></td></tr>
+                <tr><td><strong>Payments</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-amber">Record</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td></tr>
+                <tr><td><strong>Earnings Report</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-ink">View</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-green">Full</span></td></tr>
+                <tr><td><strong>Team Management</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-amber">Add/Edit</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td></tr>
+                <tr><td><strong>Settings</strong></td><td style="text-align:center"><span class="badge badge-green">Full</span></td><td style="text-align:center"><span class="badge badge-amber">Limited</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td><td style="text-align:center"><span class="badge badge-red">None</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Custom Overrides — Individual Permissions</div>
+            <div class="text-muted text-sm">Owner can override role defaults for any team member</div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="background:var(--paper-2);border-radius:10px;padding:16px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                  <div class="team-avatar" style="width:36px;height:36px;font-size:14px;background:var(--green)">RK</div>
+                  <div><div style="font-weight:600;">Rahul Khanna</div><div style="font-size:12px;color:var(--accent);">SALES AGENT</div></div>
+                  <span style="margin-left:auto;font-size:12px;color:var(--ink-4);">Custom override active</span>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" checked onchange=""> Payments (View)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox"> Earnings Report
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+                    <input type="checkbox" checked> Team (View)
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: INTEGRATIONS ══ -->
+      <div class="page" id="page-integrations">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Integrations</div>
+            <div class="page-sub">Connect Meta Ads and WhatsApp for automatic lead capture</div>
+          </div>
+        </div>
+
+        <div class="integration-card">
+          <div class="integration-header">
+            <div class="integration-icon" style="background:#e7f3ff;">📘</div>
+            <div>
+              <div class="integration-title">Meta Lead Ads</div>
+              <div class="integration-sub">Auto-capture leads from Facebook & Instagram ad forms</div>
+            </div>
+            <div class="connected-indicator">
+              <span style="color:var(--green);">● Connected</span>
+              <label class="toggle">
+                <input type="checkbox" checked>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div style="background:var(--paper-2);padding:12px;border-radius:8px;">
+              <div class="text-muted text-sm" style="margin-bottom:4px;">Status</div>
+              <div style="font-weight:600;color:var(--green);">✓ Active</div>
+            </div>
+            <div style="background:var(--paper-2);padding:12px;border-radius:8px;">
+              <div class="text-muted text-sm" style="margin-bottom:4px;">Last Sync</div>
+              <div style="font-weight:600;">2 min ago</div>
+            </div>
+            <div style="background:var(--paper-2);padding:12px;border-radius:8px;">
+              <div class="text-muted text-sm" style="margin-bottom:4px;">Leads This Month</div>
+              <div style="font-weight:600;font-family:'DM Mono',monospace;">28 leads</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-secondary btn-sm">⚙️ Configure</button>
+            <button class="btn btn-secondary btn-sm">🧪 Send Test Lead</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red)">Disconnect</button>
+          </div>
+        </div>
+
+        <div class="integration-card">
+          <div class="integration-header">
+            <div class="integration-icon" style="background:#dcfce7;">💬</div>
+            <div>
+              <div class="integration-title">WhatsApp Business API</div>
+              <div class="integration-sub">Auto-capture leads from WhatsApp messages via bot</div>
+            </div>
+            <div class="connected-indicator">
+              <span style="color:var(--green);">● Connected</span>
+              <label class="toggle">
+                <input type="checkbox" checked>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div style="background:var(--paper-2);padding:12px;border-radius:8px;">
+              <div class="text-muted text-sm" style="margin-bottom:4px;">Provider</div>
+              <div style="font-weight:600;">Interakt</div>
+            </div>
+            <div style="background:var(--paper-2);padding:12px;border-radius:8px;">
+              <div class="text-muted text-sm" style="margin-bottom:4px;">Bot Status</div>
+              <div style="font-weight:600;color:var(--green);">✓ Running</div>
+            </div>
+            <div style="background:var(--paper-2);padding:12px;border-radius:8px;">
+              <div class="text-muted text-sm" style="margin-bottom:4px;">Leads This Month</div>
+              <div style="font-weight:600;font-family:'DM Mono',monospace;">19 leads</div>
+            </div>
+          </div>
+
+          <div style="background:var(--paper-2);border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;margin-bottom:12px;color:var(--ink-4);">BOT CONVERSATION FLOW</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;gap:8px;align-items:flex-start;">
+                <span style="background:var(--green);color:white;font-size:10px;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:2px;">BOT</span>
+                <div style="background:white;padding:8px 12px;border-radius:8px;font-size:13px;">Welcome to PrintCo! 🖨 What would you like printed?</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-end;">
+                <div style="background:var(--accent-light);padding:8px 12px;border-radius:8px;font-size:13px;color:var(--ink-3);">Customer replies with product info…</div>
+                <span style="background:var(--ink-4);color:white;font-size:10px;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:2px;">USER</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start;">
+                <span style="background:var(--green);color:white;font-size:10px;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:2px;">BOT</span>
+                <div style="background:white;padding:8px 12px;border-radius:8px;font-size:13px;">Great! How many pieces do you need?</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start;">
+                <span style="background:var(--green);color:white;font-size:10px;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:2px;">BOT</span>
+                <div style="background:white;padding:8px 12px;border-radius:8px;font-size:13px;">May I have your name, please?</div>
+              </div>
+              <div style="text-align:center;font-size:12px;color:var(--green);font-weight:600;padding:8px;">✓ Lead automatically created in CRM!</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-secondary btn-sm">✏️ Edit Bot Questions</button>
+            <button class="btn btn-secondary btn-sm">🔗 Auto-Assignment Rules</button>
+          </div>
+        </div>
+
+        <div class="integration-card" style="opacity:0.7;">
+          <div class="integration-header">
+            <div class="integration-icon" style="background:#fef9c3;">📧</div>
+            <div>
+              <div class="integration-title">Email Integration</div>
+              <div class="integration-sub">Sync with Gmail or Outlook for email communication</div>
+            </div>
+            <div class="connected-indicator">
+              <span style="color:var(--ink-4);">○ Not Connected</span>
+              <button class="btn btn-primary btn-sm">Connect</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: NOTIFICATIONS ══ -->
+      <div class="page" id="page-notifications">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Notifications</div>
+            <div class="page-sub">5 unread notifications</div>
+          </div>
+          <button class="btn btn-secondary btn-sm">Mark All Read</button>
+        </div>
+
+        <div class="card">
+          <div class="card-body" style="padding:8px;">
+            <div class="notif-list">
+              <div class="notif-item unread">
+                <div class="notif-icon" style="background:var(--red-light);">🚨</div>
+                <div class="notif-content">
+                  <div class="notif-title">Order #1038 is Overdue!</div>
+                  <div class="notif-body">Rajesh Kumar's Banner × 3 order was due 2 days ago. Immediate action required.</div>
+                  <div class="notif-time">Today, 9:00 AM</div>
+                </div>
+              </div>
+              <div class="notif-item unread">
+                <div class="notif-icon" style="background:var(--accent-light);">🎯</div>
+                <div class="notif-content">
+                  <div class="notif-title">New Hot Lead from Meta Ad</div>
+                  <div class="notif-body">Sunita Bose enquired about 500 Visiting Cards. Assigned to Rahul.</div>
+                  <div class="notif-time">Today, 2:30 PM</div>
+                </div>
+              </div>
+              <div class="notif-item unread">
+                <div class="notif-icon" style="background:var(--amber-light);">⏰</div>
+                <div class="notif-content">
+                  <div class="notif-title">Order #1040 due tomorrow</div>
+                  <div class="notif-body">Sanjay Gupta's Mugs × 50 order is due tomorrow. Currently in Ready stage.</div>
+                  <div class="notif-time">Today, 8:00 AM</div>
+                </div>
+              </div>
+              <div class="notif-item unread">
+                <div class="notif-icon" style="background:var(--green-light);">💰</div>
+                <div class="notif-content">
+                  <div class="notif-title">Payment Recorded — ₹5,000</div>
+                  <div class="notif-body">Rahul recorded ₹5,000 UPI payment for Order #1042 (Meena Shah).</div>
+                  <div class="notif-time">Today, 2:45 PM</div>
+                </div>
+              </div>
+              <div class="notif-item unread">
+                <div class="notif-icon" style="background:var(--blue-light);">📦</div>
+                <div class="notif-content">
+                  <div class="notif-title">Order #1042 moved to In Production</div>
+                  <div class="notif-body">Amit Singh updated Order #1042 status to In Production.</div>
+                  <div class="notif-time">Today, 2:30 PM</div>
+                </div>
+              </div>
+              <div class="notif-item">
+                <div class="notif-icon" style="background:var(--paper-2);">👥</div>
+                <div class="notif-content">
+                  <div class="notif-title">New team member added</div>
+                  <div class="notif-body">Neha Joshi (Delivery) has been added to the team.</div>
+                  <div class="notif-time">Yesterday, 11:30 AM</div>
+                </div>
+              </div>
+              <div class="notif-item">
+                <div class="notif-icon" style="background:var(--paper-2);">✅</div>
+                <div class="notif-content">
+                  <div class="notif-title">Order #1035 Delivered</div>
+                  <div class="notif-body">Ananya Patel's Visiting Cards × 500 have been delivered successfully.</div>
+                  <div class="notif-time">Yesterday, 6:10 PM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: SETTINGS ══ -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Settings</div>
+            <div class="page-sub">System configuration and preferences</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:10px;">Business Profile</div>
+            <div class="settings-section">
+              <div class="settings-row">
+                <div><div class="settings-label">Business Name</div><div class="settings-desc">PrintCo Solutions</div></div>
+                <button class="btn btn-ghost btn-sm">Edit</button>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Phone Number</div><div class="settings-desc">+91 98000 11111</div></div>
+                <button class="btn btn-ghost btn-sm">Edit</button>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Address</div><div class="settings-desc">Lucknow, Uttar Pradesh</div></div>
+                <button class="btn btn-ghost btn-sm">Edit</button>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">GST Number</div><div class="settings-desc">09AAAAA0000A1Z5</div></div>
+                <button class="btn btn-ghost btn-sm">Edit</button>
+              </div>
+            </div>
+
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:10px;margin-top:20px;">Lead Management</div>
+            <div class="settings-section">
+              <div class="settings-row">
+                <div><div class="settings-label">Auto-assign Meta leads to</div><div class="settings-desc">Currently: Rahul Khanna</div></div>
+                <select class="filter-select"><option>Rahul</option><option>Priya</option><option>Amit</option></select>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Auto-assign WhatsApp leads to</div><div class="settings-desc">Currently: Priya Desai</div></div>
+                <select class="filter-select"><option>Priya</option><option>Rahul</option><option>Amit</option></select>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Lead follow-up reminder</div><div class="settings-desc">Remind after 24 hours of no activity</div></div>
+                <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:10px;">Notifications</div>
+            <div class="settings-section">
+              <div class="settings-row">
+                <div><div class="settings-label">In-app Notifications</div><div class="settings-desc">Show notifications in the app</div></div>
+                <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">WhatsApp Alerts to Team</div><div class="settings-desc">Send alerts via WhatsApp</div></div>
+                <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Overdue Order Alerts</div><div class="settings-desc">Alert owner + manager</div></div>
+                <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">New Lead Alert</div><div class="settings-desc">Notify assigned member immediately</div></div>
+                <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+            </div>
+
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:10px;margin-top:20px;">Security</div>
+            <div class="settings-section">
+              <div class="settings-row">
+                <div><div class="settings-label">Session Timeout</div><div class="settings-desc">Auto-logout after inactivity</div></div>
+                <select class="filter-select"><option>30 min</option><option>1 hour</option><option>4 hours</option><option>Never</option></select>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Require Strong Passwords</div><div class="settings-desc">Min 8 chars with numbers</div></div>
+                <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-label">Activity Log Retention</div><div class="settings-desc">Keep logs for</div></div>
+                <select class="filter-select"><option>1 year</option><option>2 years</option><option>Forever</option></select>
+              </div>
+            </div>
+
+            <div style="margin-top:20px;">
+              <button class="btn btn-primary btn-sm">💾 Save All Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ════════ MODALS ════════ -->
+
+<!-- Lead Detail Modal -->
+<div class="modal-overlay" id="modal-lead">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <div class="modal-title">Lead Details — Sunita Bose</div>
+      <button class="modal-close" onclick="closeModal('modal-lead')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div class="detail-section">
+            <div class="detail-section-title">Contact Information</div>
+            <div class="detail-grid">
+              <div class="detail-field"><div class="detail-field-label">Name</div><div class="detail-field-value">Sunita Bose</div></div>
+              <div class="detail-field"><div class="detail-field-label">Phone</div><div class="detail-field-value font-mono">+91 98765 43210</div></div>
+              <div class="detail-field"><div class="detail-field-label">Email</div><div class="detail-field-value">sunita@example.com</div></div>
+              <div class="detail-field"><div class="detail-field-label">Source</div><div class="detail-field-value"><span class="lead-source">📘 Meta Ad</span></div></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-title">Lead Information</div>
+            <div class="detail-grid">
+              <div class="detail-field"><div class="detail-field-label">Product Required</div><div class="detail-field-value">Visiting Cards</div></div>
+              <div class="detail-field"><div class="detail-field-label">Quantity</div><div class="detail-field-value font-mono">500 pcs</div></div>
+              <div class="detail-field"><div class="detail-field-label">Temperature</div>
+                <div>
+                  <select class="filter-select" style="font-size:12px;padding:4px 10px;">
+                    <option>🔥 Hot</option><option>🌡 Warm</option><option>❄️ Cold</option><option>❓ General</option>
+                  </select>
+                </div>
+              </div>
+              <div class="detail-field"><div class="detail-field-label">Assigned To</div>
+                <select class="filter-select" style="font-size:12px;padding:4px 10px;">
+                  <option>Rahul Khanna</option><option>Priya Desai</option><option>Amit Singh</option>
+                </select>
+              </div>
+              <div class="detail-field"><div class="detail-field-label">Created</div><div class="detail-field-value">29 May 2026, 2:30 PM</div></div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary" style="flex:1">📱 WhatsApp</button>
+            <button class="btn btn-secondary" style="flex:1">📞 Call</button>
+            <button class="btn btn-success" style="flex:1" onclick="closeModal('modal-lead');openOrderDetail()">🔄 Convert to Order</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="detail-section">
+            <div class="detail-section-title">Notes & Activity</div>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-dot"></div>
+                <div class="activity-text"><strong>Priya</strong> — "Customer wants matte finish, prefers 350 gsm"</div>
+                <div class="activity-time">2:45 PM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--blue)"></div>
+                <div class="activity-text"><strong>System</strong> — Lead created from Meta Ad</div>
+                <div class="activity-time">2:30 PM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--green)"></div>
+                <div class="activity-text"><strong>System</strong> — Assigned to Rahul Khanna</div>
+                <div class="activity-time">2:30 PM</div>
+              </div>
+            </div>
+            <div class="note-input-wrap">
+              <textarea class="note-input" rows="2" placeholder="Add a note visible to the whole team…"></textarea>
+              <button class="btn btn-primary btn-sm">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <div class="modal-title">Order #1042 — Meena Shah</div>
+      <button class="modal-close" onclick="closeModal('modal-order')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div class="detail-section">
+            <div class="detail-section-title">Order Information</div>
+            <div class="detail-grid">
+              <div class="detail-field"><div class="detail-field-label">Customer</div><div class="detail-field-value">Meena Shah</div></div>
+              <div class="detail-field"><div class="detail-field-label">Phone</div><div class="detail-field-value font-mono">+91 76543 21098</div></div>
+              <div class="detail-field"><div class="detail-field-label">Product</div><div class="detail-field-value">Printed Mugs</div></div>
+              <div class="detail-field"><div class="detail-field-label">Quantity</div><div class="detail-field-value font-mono">100 pcs</div></div>
+              <div class="detail-field"><div class="detail-field-label">Specs</div><div class="detail-field-value">White ceramic · 11oz · Full wrap logo</div></div>
+              <div class="detail-field"><div class="detail-field-label">Deadline</div><div class="detail-field-value"><span class="deadline-badge deadline-amber">Today, 29 May</span></div></div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-section-title">Update Stage</div>
+            <select class="form-input" style="margin-bottom:10px;">
+              <option>1 — New / Confirmed</option>
+              <option>2 — Quoted</option>
+              <option selected>3 — In Production</option>
+              <option>4 — Quality Check</option>
+              <option>5 — Ready</option>
+              <option>6 — Out for Delivery</option>
+              <option>7 — Delivered</option>
+            </select>
+            <button class="btn btn-primary btn-sm">→ Update Stage</button>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-section-title">Payment</div>
+            <div class="balance-bar">
+              <div class="balance-item"><div class="balance-value font-mono">₹12,000</div><div class="balance-label">Total</div></div>
+              <div class="balance-item"><div class="balance-value font-mono" style="color:var(--green)">₹5,000</div><div class="balance-label">Paid</div></div>
+              <div class="balance-item"><div class="balance-value font-mono" style="color:var(--red)">₹7,000</div><div class="balance-label">Balance</div></div>
+            </div>
+            <span class="badge badge-amber" style="margin-bottom:10px;">Advance Paid</span>
+            <div style="margin-top:10px;">
+              <button class="btn btn-success btn-sm" onclick="closeModal('modal-order');openAddPayment()">+ Record Payment</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="detail-section">
+            <div class="detail-section-title">Activity Log</div>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-dot"></div>
+                <div class="activity-text"><strong>Rahul</strong> moved to In Production</div>
+                <div class="activity-time">2:30 PM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--green)"></div>
+                <div class="activity-text"><strong>Amit</strong> recorded ₹5,000 advance (UPI)</div>
+                <div class="activity-time">2:00 PM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--blue)"></div>
+                <div class="activity-text"><strong>Priya</strong> confirmed order and set deadline</div>
+                <div class="activity-time">29 May, 10:00 AM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--amber)"></div>
+                <div class="activity-text"><strong>System</strong> — Order created from Lead #203</div>
+                <div class="activity-time">28 May, 4:30 PM</div>
+              </div>
+            </div>
+            <div class="note-input-wrap">
+              <textarea class="note-input" rows="2" placeholder="Add a note…"></textarea>
+              <button class="btn btn-primary btn-sm">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Detail Modal -->
+<div class="modal-overlay" id="modal-customer">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <div class="modal-title">Customer Profile — Pooja Nair</div>
+      <button class="modal-close" onclick="closeModal('modal-customer')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div style="background:var(--paper-2);border-radius:12px;padding:20px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+              <div class="team-avatar" style="width:52px;height:52px;font-size:20px;background:var(--accent)">PN</div>
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;">Pooja Nair</div>
+                <div style="font-size:13px;color:var(--ink-4);">+91 54321 09876 · pooja@example.com</div>
+                <span class="badge badge-green" style="margin-top:4px;">VIP ⭐</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+              <div style="text-align:center;background:white;border-radius:8px;padding:10px;">
+                <div class="font-mono font-bold" style="font-size:22px;color:var(--accent)">8</div>
+                <div class="text-muted text-sm">Orders</div>
+              </div>
+              <div style="text-align:center;background:white;border-radius:8px;padding:10px;">
+                <div class="font-mono font-bold" style="font-size:18px;color:var(--green)">₹42.5k</div>
+                <div class="text-muted text-sm">Lifetime</div>
+              </div>
+              <div style="text-align:center;background:white;border-radius:8px;padding:10px;">
+                <div class="font-mono font-bold" style="font-size:18px;color:var(--green)">₹0</div>
+                <div class="text-muted text-sm">Balance</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-grid" style="margin-bottom:16px;">
+            <div class="detail-field"><div class="detail-field-label">First Order</div><div class="detail-field-value">Jan 12, 2025</div></div>
+            <div class="detail-field"><div class="detail-field-label">Last Order</div><div class="detail-field-value">29 May, 2026</div></div>
+            <div class="detail-field"><div class="detail-field-label">Lead Source</div><div class="detail-field-value"><span class="lead-source">Referral</span></div></div>
+            <div class="detail-field"><div class="detail-field-label">Address</div><div class="detail-field-value">Hazratganj, Lucknow</div></div>
+          </div>
+          <button class="btn btn-primary">+ New Order for Pooja</button>
+        </div>
+
+        <div>
+          <div class="detail-section-title" style="margin-bottom:12px;">Order History</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--paper-2);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;">
+              <div style="flex:1;">
+                <div style="font-weight:600;font-size:13.5px;">Business Cards × 1000</div>
+                <div style="font-size:12px;color:var(--ink-4);">Order #1045 · 29 May 2026</div>
+              </div>
+              <span class="badge badge-blue">In Progress</span>
+              <span class="font-mono font-bold text-sm">₹3,500</span>
+            </div>
+            <div style="background:var(--paper-2);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;">
+              <div style="flex:1;">
+                <div style="font-weight:600;font-size:13.5px;">Flex Banner × 2</div>
+                <div style="font-size:12px;color:var(--ink-4);">Order #1028 · 10 Apr 2026</div>
+              </div>
+              <span class="badge badge-green">Delivered</span>
+              <span class="font-mono font-bold text-sm">₹2,800</span>
+            </div>
+            <div style="background:var(--paper-2);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;">
+              <div style="flex:1;">
+                <div style="font-weight:600;font-size:13.5px;">Printed Mugs × 50</div>
+                <div style="font-size:12px;color:var(--ink-4);">Order #1012 · 8 Feb 2026</div>
+              </div>
+              <span class="badge badge-green">Delivered</span>
+              <span class="font-mono font-bold text-sm">₹6,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Lead Modal -->
+<div class="modal-overlay" id="modal-add-lead">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Lead</div>
+      <button class="modal-close" onclick="closeModal('modal-add-lead')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Customer Name *</label>
+        <input class="form-input" type="text" placeholder="e.g. Sunita Bose">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Phone Number *</label>
+          <input class="form-input" type="text" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="optional">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Lead Source *</label>
+          <select class="form-input">
+            <option>Meta Ad</option>
+            <option>WhatsApp</option>
+            <option>Walk-in</option>
+            <option>Referral</option>
+            <option>Manual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Temperature</label>
+          <select class="form-input">
+            <option>Cold</option>
+            <option>Warm</option>
+            <option>Hot</option>
+            <option>General</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Product Required</label>
+          <select class="form-input">
+            <option>Visiting Cards</option>
+            <option>Banners</option>
+            <option>Mugs / Cups</option>
+            <option>Stickers</option>
+            <option>Business Cards</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input class="form-input" type="text" placeholder="e.g. 500 pcs">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assign To</label>
+        <select class="form-input">
+          <option>Rahul Khanna</option>
+          <option>Priya Desai</option>
+          <option>Amit Singh</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" rows="3" placeholder="Any additional details…" style="resize:none;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-lead')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-add-lead')">Create Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Payment Modal -->
+<div class="modal-overlay" id="modal-add-payment">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Record Payment</div>
+      <button class="modal-close" onclick="closeModal('modal-add-payment')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--paper-2);border-radius:10px;padding:14px;margin-bottom:20px;display:flex;gap:20px;">
+        <div><div class="text-muted text-sm">Order Total</div><div class="font-mono font-bold" style="font-size:18px;">₹12,000</div></div>
+        <div><div class="text-muted text-sm">Paid So Far</div><div class="font-mono font-bold" style="font-size:18px;color:var(--green)">₹5,000</div></div>
+        <div><div class="text-muted text-sm">Balance Due</div><div class="font-mono font-bold" style="font-size:18px;color:var(--red)">₹7,000</div></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount Received (₹) *</label>
+        <input class="form-input" type="number" placeholder="e.g. 7000">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Payment Method *</label>
+          <select class="form-input">
+            <option>UPI</option>
+            <option>Cash</option>
+            <option>Bank Transfer</option>
+            <option>Cheque</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input class="form-input" type="date" value="2026-05-29">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">UPI Transaction ID / Reference</label>
+        <input class="form-input" type="text" placeholder="Optional – for UPI or bank transfers">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <input class="form-input" type="text" placeholder="e.g. Customer said balance by Friday">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-payment')">Cancel</button>
+      <button class="btn btn-success" onclick="closeModal('modal-add-payment')">✓ Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Team Modal -->
+<div class="modal-overlay" id="modal-add-team">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Team Member</div>
+      <button class="modal-close" onclick="closeModal('modal-add-team')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input class="form-input" type="text" placeholder="e.g. Kavya Sharma">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number *</label>
+          <input class="form-input" type="text" placeholder="+91 XXXXX XXXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="kavya@printco.in">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role *</label>
+        <select class="form-input">
+          <option>Sales Agent</option>
+          <option>Manager</option>
+          <option>Production</option>
+          <option>Delivery</option>
+          <option>Accountant</option>
+        </select>
+      </div>
+      <div style="background:var(--accent-light);border-radius:8px;padding:12px;font-size:13px;color:var(--ink-3);">
+        📱 Login credentials will be sent to this team member via WhatsApp and Email after creation.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-team')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-add-team')">Add Member + Send Invite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Order Modal -->
+<div class="modal-overlay" id="modal-add-order">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create New Order</div>
+      <button class="modal-close" onclick="closeModal('modal-add-order')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Customer *</label>
+        <input class="form-input" type="text" placeholder="Search customer by name or phone…">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Product Type *</label>
+          <select class="form-input">
+            <option>Visiting Cards</option>
+            <option>Flex Banners</option>
+            <option>Printed Mugs</option>
+            <option>Stickers</option>
+            <option>Business Cards</option>
+            <option>T-Shirt Print</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quantity *</label>
+          <input class="form-input" type="text" placeholder="e.g. 500 pcs">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Specifications / Design Notes</label>
+        <textarea class="form-input" rows="2" placeholder="Size, material, finish, design notes…" style="resize:none;"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Order Amount (₹) *</label>
+          <input class="form-input" type="number" placeholder="e.g. 3500">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deadline *</label>
+          <input class="form-input" type="date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assign To</label>
+        <select class="form-input">
+          <option>Rahul Khanna</option>
+          <option>Priya Desai</option>
+          <option>Amit Singh</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-order')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-add-order')">Create Order</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── NAVIGATION ──
+  const pages = {
+    'dashboard': 'Dashboard',
+    'leads': 'Leads',
+    'orders': 'Order Pipeline',
+    'customers': 'Customers',
+    'payments': 'Payments',
+    'team': 'Team Management',
+    'permissions': 'Roles & Permissions',
+    'integrations': 'Integrations',
+    'notifications': 'Notifications',
+    'settings': 'Settings'
+  };
+
+  function navTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    const target = document.getElementById('page-' + page);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + page + "'")) {
+        n.classList.add('active');
+      }
+    });
+
+    document.getElementById('topbar-title').textContent = pages[page] || page;
+  }
+
+  // ── LOGIN ──
+  let currentRole = 'owner';
+
+  function setRole(role) {
+    currentRole = role;
+    const roles = {
+      'owner': { name: 'Arjun Mehta', role: 'Owner', initials: 'AM' },
+      'manager': { name: 'Priya Desai', role: 'Manager', initials: 'PD' },
+      'sales': { name: 'Rahul Khanna', role: 'Sales Agent', initials: 'RK' },
+      'production': { name: 'Amit Singh', role: 'Production', initials: 'AS' }
+    };
+    const r = roles[role] || roles['owner'];
+    document.getElementById('sb-username').textContent = r.name;
+    document.getElementById('sb-userrole').textContent = r.role;
+    document.querySelector('.avatar').textContent = r.initials;
+  }
+
+  function doLogin() {
+    document.getElementById('login-page').style.display = 'none';
+    const app = document.getElementById('app');
+    app.classList.add('visible');
+    setRole(currentRole);
+  }
+
+  function doLogout() {
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('login-page').style.display = 'flex';
+  }
+
+  // ── MODALS ──
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+  function openLeadDetail() { openModal('modal-lead'); }
+  function openOrderDetail() { openModal('modal-order'); }
+  function openCustomerDetail() { openModal('modal-customer'); }
+  function openAddLead() { openModal('modal-add-lead'); }
+  function openAddPayment() { openModal('modal-add-payment'); }
+  function openAddTeam() { openModal('modal-add-team'); }
+  function openAddOrder() { openModal('modal-add-order'); }
+
+  // Close modal on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  });
+
+  // Filter pills
+  document.querySelectorAll('.filter-pill').forEach(pill => {
+    pill.addEventListener('click', function() {
+      const siblings = this.parentElement.querySelectorAll('.filter-pill');
+      siblings.forEach(s => s.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

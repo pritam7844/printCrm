@@ -1,0 +1,687 @@
+
+
+
+PrintCRM
+Complete System Specification Document
+CRM for Print-on-Demand Business
+Leads  •  Orders  •  Customers  •  Payments  •  Team  •  Integrations
+
+
+Version 1.0
+May 2026
+Confidential
+
+Table of Contents
+
+1.  System Overview3
+2.  Lead Management4
+3.  Order Pipeline6
+4.  Customer Management8
+5.  Payment Tracking9
+6.  Team Management & Activity Log11
+7.  Roles & Permissions12
+8.  Integrations — Meta Ads & WhatsApp14
+9.  Notifications16
+10.  Manager Dashboard17
+11.  Technology Stack & Hosting18
+12.  Cost Estimate19
+
+1. System Overview
+
+PrintCRM is a fully custom web-based CRM (Customer Relationship Management) system designed specifically for a print-on-demand business that produces printed products such as cups, cards, visiting cards, banners, and similar items.
+
+The system manages the complete lifecycle of a customer — from the first inquiry on WhatsApp or a Meta Ad, through order placement, production, delivery, and payment — all in one place, accessible by the entire team with role-based permissions.
+
+Core Modules
+Module
+Purpose
+Lead Management
+Capture, track, and convert leads from WhatsApp, Meta Ads, or manual entry
+Order Pipeline
+Manage orders through 7 stages from confirmation to delivery
+Customer Management
+Store all customer profiles, order history, and repeat orders
+Payment Tracking
+Record payments, track balances, and manage outstanding amounts
+Team Management
+Add team members, assign roles, track activity log
+Roles & Permissions
+Control who sees and does what across all modules
+Integrations
+Auto-connect Meta Lead Ads and WhatsApp Business API
+Notifications
+Alert team members for new leads, deadlines, and updates
+Manager Dashboard
+Bird's eye view of all leads, orders, revenue, and team activity
+
+
+Business Type
+Products: Printed cups, visiting cards, banners, business cards, mugs, stickers
+Lead Sources: WhatsApp Business, Facebook/Instagram Ads (Meta), Walk-in, Referral
+Team: Owner, Manager, Sales Agents, Production Staff, Delivery Staff, Accountant
+
+2. Lead Management
+
+Every potential customer enters the system as a Lead. Leads are captured automatically from Meta Ads and WhatsApp, or manually added by any team member with the appropriate permission.
+
+2.1 Lead Sources
+Source
+How It Works
+Automation Level
+Meta Lead Ads
+Customer fills form on Facebook/Instagram ad
+100% Automatic — instant
+WhatsApp
+Customer messages on WhatsApp, bot collects details
+100% Automatic — bot driven
+Manual Entry
+Team member adds lead via Add Lead form
+Manual — 30 seconds
+
+
+2.2 Lead Card Information
+Each lead is displayed as a card in the CRM showing:
+Customer name and phone number
+Lead source (Meta Ad / WhatsApp / Manual / Walk-in / Referral)
+Product required (cups, cards, banners, etc.)
+Quantity required
+Lead temperature (Cold / Warm / Hot / General)
+Date and time lead was created
+Assigned team member
+Current status
+Quick action buttons — WhatsApp, Call, Add Note
+
+2.3 Lead Temperature System
+Temperature
+Label
+Meaning
+Team Action
+COLD
+Cold
+Just inquired, no response yet
+Follow up within 24 hours
+WARM
+Warm
+Replied, asked price or sample
+Send quote, push to convert
+HOT
+Hot
+Ready to order, finalizing
+Confirm order immediately
+GENERAL
+General
+Unclear or random inquiry
+Qualify the lead first
+
+
+2.4 Lead Detail Page
+Clicking any lead card opens the full Lead Detail Page with:
+All contact information
+Change temperature button (Cold / Warm / Hot / General)
+Assign to team member dropdown
+Add Note — notes visible to entire team with timestamp and author
+Convert to Order button — when lead is ready to place order
+WhatsApp button — opens WhatsApp chat with customer directly
+Call button — dials customer phone
+Full Activity Log — every action recorded (see Section 6)
+
+2.5 Lead Filters & Search
+Filter by source (Meta / WhatsApp / Manual)
+Filter by temperature (Cold / Warm / Hot / General)
+Filter by assigned team member
+Filter by date range
+Search by customer name or phone number
+
+3. Order Pipeline
+
+When a lead is ready to place an order, it is converted into an Order. Orders move through a 7-stage pipeline tracked visually in a Kanban board view.
+
+3.1 Order Stages
+#
+Stage
+Meaning
+Who Updates
+1
+New / Confirmed
+Order placed and confirmed by customer
+Sales Agent
+2
+Quoted
+Quotation sent to customer awaiting approval
+Sales Agent
+3
+In Production
+Design and printing work in progress
+Production Staff
+4
+Quality Check
+Finished product being checked for quality
+Production Staff
+5
+Ready
+Product ready, waiting for dispatch
+Production Staff
+6
+Out for Delivery
+Product dispatched or out for delivery
+Delivery Staff
+7
+Delivered
+Product delivered and confirmed
+Delivery Staff
+
+
+3.2 Order Card Information
+Each order in the pipeline shows:
+Customer name and phone
+Product type and quantity
+Total order amount
+Amount paid and balance due
+Deadline — color coded: Green (safe), Amber (due soon), Red (overdue)
+Assigned team member
+Current stage
+Days remaining to deadline
+
+3.3 Order Detail Page
+Full order information including product specs, size, design notes
+Update status — move to next stage
+Add notes at any stage — visible to whole team
+Deadline management — set or change deadline
+Payment section — record payments (see Section 5)
+WhatsApp and Call quick action buttons
+Full activity log — who updated what, when
+Link back to original customer profile
+
+3.4 Deadline Tracking
+Color
+Status
+Meaning
+Action Required
+Green
+On Track
+3+ days remaining
+Continue normal work
+Amber
+Due Soon
+1-2 days remaining
+Prioritize this order
+Red
+Overdue
+Past deadline
+Escalate immediately
+
+
+Overdue orders are automatically highlighted on the Manager Dashboard and the assigned team member receives an immediate notification.
+
+4. Customer Management
+
+When a lead places their first order, they become a saved Customer in the system. All their information, order history, notes, and payment records are stored permanently in their profile.
+
+4.1 Customer Profile Contains
+Full name, phone number, email, address
+Total number of orders placed
+Total amount spent (lifetime value)
+Total outstanding balance (if any unpaid orders)
+Date of first order and last order
+Source — how they first came in (Meta Ad / WhatsApp / Walk-in etc.)
+All past orders with status and payment
+All notes ever added across all orders
+Full activity history
+
+4.2 Repeat Customer Flow
+When the same customer comes back:
+Team searches customer by name or phone number
+Existing profile opens — all history visible
+Team clicks 'New Order' directly on customer profile
+New order linked to same customer — no duplicate entry
+Customer's order count and lifetime value automatically updated
+
+4.3 Customer Flags
+Flag
+Condition
+Action
+Outstanding Balance
+Customer has unpaid balance
+Show warning before new order
+VIP Customer
+3+ orders or high order value
+Priority handling
+Inactive
+No order in 90+ days
+Trigger re-engagement
+
+
+5. Payment Tracking
+
+Every order has a complete payment record. The system tracks partial payments, full payments, balances, and payment methods — giving the manager and accountant full financial visibility.
+
+5.1 Payment Status
+Status
+Meaning
+Badge Color
+Unpaid
+No payment received yet
+Red
+Advance Paid
+Partial payment received
+Amber
+Fully Paid
+Complete payment received
+Green
+Overdue Payment
+Payment not received past due date
+Red with alert icon
+Refunded
+Money returned to customer
+Purple
+
+
+5.2 Payment Record Fields
+Each payment entry records:
+Amount received
+Date of payment
+Payment method — Cash / UPI / Bank Transfer / Cheque / Other
+UPI transaction ID or reference number (optional)
+Collected by (which team member recorded it)
+Remaining balance after this payment
+Notes (e.g. 'Customer said balance by Friday')
+
+5.3 Payment Flow Example
+Order Total: Rs. 2,000  |  Customer pays Rs. 1,000 advance (UPI)  |  Rahul records in CRM  |  Balance: Rs. 1,000  |  Order delivered  |  Customer pays Rs. 1,000 (Cash)  |  Priya records payment  |  Order marked Fully Paid  |  Revenue dashboard updated
+
+5.4 Financial Reports (Accountant / Owner / Manager)
+Total revenue this month / this week / today
+Total collected amount
+Total outstanding (money not yet received)
+List of customers with pending balances
+Payment method breakdown (Cash vs UPI vs Transfer)
+Revenue per product type (cups vs cards vs banners)
+Team member wise collection (who collected how much)
+
+5.5 Payment Permissions
+Payment and financial data is protected by role-based access:
+Only Owner, Manager, and Accountant can view payment records
+Only Owner and Accountant can access full financial reports
+Sales Agents can record a payment but cannot view earnings reports
+Production and Delivery staff have no access to payment data
+Owner can customize any individual's payment permissions
+
+6. Team Management & Activity Log
+
+6.1 Team Member Profile
+Each team member in the system has a profile containing:
+Name, phone number, email
+Role assigned (Owner / Manager / Sales / Production / Delivery / Accountant)
+Date joined
+Current leads assigned
+Current orders assigned
+Activity log — every action they have taken
+Performance summary — leads converted, orders completed, payments collected
+
+6.2 Activity Log — Every Action Recorded
+The system records every action taken by every team member. Nothing is missed.
+
+Every entry in the activity log records: WHO did it  |  WHAT they did  |  WHICH lead or order  |  DATE and TIME
+
+Actions Tracked in Activity Log
+Lead created (auto or manual)
+Lead temperature changed
+Lead assigned to team member
+Note added on a lead
+Lead converted to order
+Order status updated
+Order deadline changed
+Note added on an order
+Payment recorded
+Payment method updated
+Customer profile edited
+New team member added
+Permission changed for team member
+
+Example Activity Log Entries
+Team Member
+Action
+Detail
+Date & Time
+Rahul
+Status updated
+Order #1042 moved to In Production
+29 May, 2:30 PM
+Priya
+Note added
+Lead #205 — Customer wants logo in red
+29 May, 4:00 PM
+Amit
+Payment recorded
+Order #1042 — Rs. 1,000 advance via UPI
+29 May, 5:15 PM
+Priya
+Delivery updated
+Order #1042 marked Delivered
+30 May, 6:00 PM
+
+
+6.3 Manager View of Team
+See all team members and their current workload
+See today's activity for each team member
+Filter activity log by team member, date, action type
+Export activity log for review
+
+7. Roles & Permissions
+
+The system uses a role-based permission model. Every team member is assigned a role that determines what they can see and do. The Owner can also customize individual permissions on top of the role defaults.
+
+7.1 Default Roles
+Role
+Description
+Owner
+Full access to everything — all modules, all data, all settings
+Manager
+Full access to leads, orders, customers, team. Limited settings. No full earnings report.
+Sales Agent
+Full access to leads and customers. Can view orders. No payment or team management access.
+Production
+Can update order status and production notes. View leads only. No payment access.
+Delivery
+Can update delivery status only. No access to leads, payments, or other team data.
+Accountant
+Full access to payment and financial reports. Can view orders and customers. No lead or team management.
+
+
+7.2 Permission Matrix
+Module
+Owner
+Manager
+Sales
+Production
+Delivery
+Account.
+Dashboard
+Full
+Full
+Limited
+Limited
+Limited
+Finance
+Leads
+Full
+Full
+Full
+View
+None
+None
+Orders
+Full
+Full
+View
+Full
+Status
+View
+Customers
+Full
+Full
+Full
+View
+None
+View
+Payments
+Full
+Full
+Record
+None
+None
+Full
+Earnings
+Full
+View
+None
+None
+None
+Full
+Team Mgmt
+Full
+Add/Edit
+None
+None
+None
+None
+Settings
+Full
+Limited
+None
+None
+None
+None
+Activity Log
+Full
+Full
+Own only
+Own only
+Own only
+Own only
+
+
+7.3 Custom Permissions
+The Owner can override the default role permissions for any individual team member:
+Toggle ON specific modules for a team member above their role default
+Toggle OFF specific modules for a team member below their role default
+Example: Sales Agent Rahul also needs to see payments — toggle payment view ON for Rahul only
+Example: Manager Priya should not see earnings — toggle earnings OFF for Priya only
+
+7.4 Team Member Management
+Owner can add new team member with name, phone, email, role
+System sends login credentials to the new team member via WhatsApp or email
+Owner or Manager can deactivate a member — they immediately lose all access
+Owner can reactivate a deactivated member
+Owner can change any team member's role at any time
+All actions on team management are recorded in the activity log
+
+8. Integrations — Meta Ads & WhatsApp
+
+8.1 Meta Lead Ads Integration
+When a customer sees an ad on Facebook or Instagram and fills in the instant lead form, their information automatically appears in the CRM within seconds — no manual work needed.
+
+How It Works
+Business runs a Lead Ad campaign on Meta (Facebook/Instagram)
+Customer clicks ad and fills the instant form (name, phone, what they need)
+Meta sends this data to the CRM via a secure Webhook (Meta Graph API)
+CRM instantly creates a new lead with all customer details
+Assigned team member receives a notification immediately
+Lead appears in the CRM pipeline tagged as Source: Meta Ad
+
+Data Captured from Meta Lead Ad
+Customer full name
+Phone number
+Email address (if collected in form)
+Which ad they came from (campaign name)
+Date and time of form submission
+Any custom questions added to the form (e.g. 'What do you want printed?')
+
+Meta Lead Ads API is free to use. You only pay for the ad spend (cost per lead). Setup takes approximately 1-2 hours by a developer.
+
+8.2 WhatsApp Business API Integration
+When a customer sends a message on WhatsApp Business, an automated bot collects their details and a lead is instantly created in the CRM.
+
+Recommended Providers for India
+Provider
+Monthly Cost
+Ease of Setup
+Notes
+Interakt
+Rs. 1,499 / month
+Very Easy
+Best for small businesses in India
+Wati
+Rs. 1,999 / month
+Easy
+Good automation features
+AiSensy
+Rs. 999 / month
+Easy
+Most affordable option
+
+
+WhatsApp Bot Flow
+Customer sends 'Hi' on WhatsApp  →  Bot replies: 'Welcome! What do you want printed?'  →  Customer replies  →  Bot asks: 'How many pieces?'  →  Customer replies  →  Bot asks: 'Your name please?'  →  Lead instantly created in CRM  →  Team member notified
+
+8.3 Integration Settings Page
+The Owner can manage all integrations from the Settings page:
+Meta Ads — Connect / Disconnect, view connection status, see last sync time
+WhatsApp API — Connect provider, view bot status, edit bot questions
+Auto-assignment rules — set which team member new leads from each source go to
+Example: All Meta Ad leads assigned to Rahul, all WhatsApp leads assigned to Priya
+Test integration — send a test lead to verify the connection is working
+
+9. Notifications
+
+The system sends automatic notifications to team members so they never miss an important update. Notifications are delivered in-app and optionally via WhatsApp message.
+
+9.1 Notification Triggers
+Event
+Who Gets Notified
+Channel
+New lead assigned to team member
+Assigned team member
+In-app + WhatsApp
+Lead temperature changed to Hot
+Assigned member + Manager
+In-app
+Order deadline is tomorrow
+Assigned member + Manager
+In-app + WhatsApp
+Order is overdue (past deadline)
+Assigned member + Manager + Owner
+In-app + WhatsApp
+New note added on my lead or order
+Assigned team member
+In-app
+Payment recorded on an order
+Manager + Accountant
+In-app
+Customer has outstanding balance
+Sales Agent on new inquiry
+In-app
+Order status changed
+Team member who created order
+In-app
+New team member added
+All team members
+In-app
+
+
+10. Manager Dashboard
+
+The Manager Dashboard is the home screen for the Owner and Manager. It provides a real-time bird's eye view of the entire business.
+
+10.1 Summary Cards (Top of Dashboard)
+Total leads today / this week / this month
+Leads by temperature — Cold, Warm, Hot, General count
+Total active orders
+Orders due today
+Overdue orders (with red alert)
+Orders delivered this month
+Revenue collected today / this month
+Outstanding payments (total unpaid balance)
+
+10.2 Live Feed Sections
+Recent leads — last 10 leads added (any source)
+Overdue orders — all orders past deadline
+Pending payments — orders with balance due
+Team activity feed — latest 20 actions by team members
+
+10.3 Quick Filters on Dashboard
+Filter all data by date range — today, this week, this month, custom
+Filter by team member — see one person's workload
+Filter by product type — see all cup orders, all card orders etc.
+
+11. Technology Stack & Hosting
+
+11.1 Recommended Tech Stack
+Layer
+Technology
+Purpose
+Frontend (UI)
+React.js
+Web app that team uses daily
+Backend (Server)
+Node.js + Express
+API, business logic, webhooks
+Database
+PostgreSQL
+Stores all leads, orders, payments, logs
+Authentication
+JWT + bcrypt
+Secure login for all team members
+Meta Integration
+Meta Graph API + Webhooks
+Auto lead capture from Meta Ads
+WhatsApp Integration
+WhatsApp Business API
+Auto lead capture from WhatsApp
+Hosting (App)
+Vercel or AWS EC2
+Runs the web application
+Hosting (DB)
+Railway or Supabase
+Runs the database
+Push Notifications
+Firebase Cloud Messaging
+In-app and mobile notifications
+File Storage
+AWS S3 or Cloudinary
+Store design files, proof images
+
+
+11.2 Security
+All data encrypted in transit (HTTPS / SSL)
+Passwords hashed — never stored in plain text
+Role-based access enforced on both frontend and backend
+Session timeout for inactive users
+Complete audit trail via activity log
+Regular automated database backups
+
+12. Cost Estimate
+
+12.1 Monthly Running Costs
+Item
+Cost (Rs./month)
+Notes
+WhatsApp Business API Provider (Interakt/AiSensy)
+Rs. 999 – 1,499
+Required for WhatsApp auto leads
+App Hosting (Vercel / AWS)
+Rs. 500 – 1,500
+Runs the CRM web app
+Database Hosting (Railway / Supabase)
+Rs. 0 – 500
+Free tier available
+Meta Ads API
+Free
+Only pay for actual ad spend
+Domain Name
+Rs. 100 – 150
+Annual cost divided monthly
+SSL Certificate
+Free
+Let's Encrypt
+TOTAL ESTIMATED MONTHLY COST
+Rs. 1,600 – 3,650 / month
+
+
+
+
+12.3 What Is Included in This System
+Complete web application accessible from any browser (desktop and mobile)
+All 10 modules described in this document
+Meta Ads webhook integration
+WhatsApp Business API integration
+Role-based permissions for up to 50 team members
+Complete activity log and audit trail
+In-app notifications + WhatsApp notifications to team
+Manager dashboard with live data
+Payment tracking and financial reports
+Customer profiles with full history
+
+
+End of Document
+PrintCRM System Specification — Version 1.0 — May 2026

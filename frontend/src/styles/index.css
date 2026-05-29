@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: #f7faf8;
+    color: #1f2724;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .shell-card {
+    @apply rounded-2xl border border-paper-border bg-paper-card shadow-card;
+  }
+
+  .icon-button {
+    @apply grid h-10 w-10 place-items-center rounded-xl border border-paper-border bg-white text-brand-dark transition-all duration-200 hover:border-brand-line hover:bg-brand-soft;
+  }
+}
+
+@layer utilities {
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fillWidth {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes pulseBorder {
+    0%, 100% {
+      border-color: rgba(38, 79, 67, 0.2);
+      background-color: rgba(38, 79, 67, 0.01);
+    }
+    50% {
+      border-color: rgba(38, 79, 67, 0.6);
+      background-color: rgba(38, 79, 67, 0.06);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-fill-width {
+    transform-origin: left;
+    animation: fillWidth 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-pulse-border {
+    animation: pulseBorder 1.5s infinite ease-in-out;
+  }
+}
