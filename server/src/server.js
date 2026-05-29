@@ -18,26 +18,14 @@ export const createServer = () => {
   const app = express();
 
   app.use(helmet());
-  
-  const allowedOrigins = process.env.CLIENT_ORIGIN
-    ? process.env.CLIENT_ORIGIN.split(',')
-    : ['http://localhost:5173', 'http://localhost:5174'];
 
   app.use(
     cors({
-      origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        const isAllowed = allowedOrigins.includes(origin) || origin.startsWith('http://localhost:');
-        if (isAllowed) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: true,
       credentials: true
     })
   );
-  
+
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
