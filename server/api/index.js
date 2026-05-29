@@ -1,22 +1,21 @@
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { createServer } from '../src/server.js';
 import { connectDatabase } from '../src/lib/database.js';
 
 dotenv.config();
 
-let dbConnected = false;
 const app = createServer();
 
 // Vercel serverless entry handler
 export default async (req, res) => {
   // Ensure database is connected before handling requests
-  if (!dbConnected) {
+  if (mongoose.connection.readyState !== 1) {
     try {
       await connectDatabase();
-      dbConnected = true;
     } catch (err) {
       console.error('Failed to establish database connection during serverless boot:', err);
-      return res.status(500).json({ error: 'Database connection failed' });
+      return res.status(500).json({ error: 'Database connection failed', details: err.message });
     }
   }
 
