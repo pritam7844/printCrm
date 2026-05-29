@@ -8,7 +8,12 @@ export const apiService = {
         method: 'POST',
         body: JSON.stringify({ email, password })
       }),
-    getMe: () => apiClient(API_ENDPOINTS.AUTH_ME)
+    getMe: () => apiClient(API_ENDPOINTS.AUTH_ME),
+    registerFcmToken: (fcmToken) =>
+      apiClient(API_ENDPOINTS.AUTH_FCM_TOKEN, {
+        method: 'PATCH',
+        body: JSON.stringify({ fcmToken })
+      })
   },
   leads: {
     getLeads: () => apiClient(API_ENDPOINTS.LEADS),

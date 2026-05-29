@@ -63,4 +63,26 @@ router.get(
   })
 );
 
+router.patch(
+  '/fcm-token',
+  requireAuth,
+  asyncHandler(async (request, response) => {
+    const { fcmToken } = request.body;
+    if (!fcmToken) {
+      response.status(400);
+      throw new Error('FCM registration token is required');
+    }
+
+    const user = await User.findById(request.user._id);
+    if (!user) {
+      response.status(404);
+      throw new Error('User not found');
+    }
+    user.fcmToken = fcmToken;
+    await user.save();
+
+    response.json({ ok: true, message: 'FCM device token registered persistently.' });
+  })
+);
+
 export default router;

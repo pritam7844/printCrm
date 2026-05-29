@@ -1,6 +1,8 @@
 import express from 'express';
 import { Lead } from '../models/Lead.js';
 import { Order } from '../models/Order.js';
+import { User } from '../models/User.js';
+import { sendPushNotification } from '../lib/firebaseAdmin.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = express.Router();
@@ -82,6 +84,22 @@ router.patch(
       response.status(404);
       throw new Error('Order not found');
     }
+
+    // Trigger backend FCM notifications to all Owners
+    try {
+      const owners = await User.find({ role: 'OWNER' });
+      const tokens = owners.map(o => o.fcmToken).filter(Boolean);
+      
+      await Promise.all(tokens.map(token =>
+        sendPushNotification(token, {
+          title: 'Order Pipeline Update',
+          body: `Order for ${order.customerName} (${order.product}) moved to ${request.body.stage}.`
+        })
+      ));
+    } catch (pushErr) {
+      console.error('[FCM Backend Push Trigger] Failed to send push notification:', pushErr);
+    }
+
     response.json({ order });
   })
 );

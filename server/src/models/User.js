@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema(
       default: 'SALES'
     },
     status: { type: String, enum: ['Online', 'Busy', 'Away', 'Offline'], default: 'Offline' },
-    permissionOverrides: [{ key: String, enabled: Boolean }]
+    permissionOverrides: [{ key: String, enabled: Boolean }],
+    fcmToken: { type: String }
   },
   { timestamps: true }
 );

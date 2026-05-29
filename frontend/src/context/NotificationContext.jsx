@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Bell, X } from 'lucide-react';
 import { getFirebaseMessaging, hasFirebaseConfig } from '../utils/firebase';
+import { useCRMData } from './CRMDataContext';
+import { apiService } from '../services/apiService';
 
 const NotificationContext = createContext(null);
 
@@ -8,6 +10,11 @@ export const NotificationProvider = ({ children }) => {
   const [toasts, setToasts] = useState([
     { id: 'seed', title: 'New WhatsApp lead', body: 'Reena Sharma asked for 250 custom mugs.' }
   ]);
+  const [fcmToken, setFcmToken] = useState(null);
+
+  // Consume authentication context
+  const crmContext = useCRMData();
+  const user = crmContext?.user;
 
   const pushToast = (toast) => {
     setToasts((currentToasts) => [{ id: crypto.randomUUID(), ...toast }, ...currentToasts].slice(0, 4));
@@ -20,13 +27,11 @@ export const NotificationProvider = ({ children }) => {
   // 1. Initialize Firebase Cloud Messaging Token & Foreground Listeners
   useEffect(() => {
     const initializeFCM = async () => {
-      // Confirm browser supports notifications & config is present
       if (!hasFirebaseConfig || typeof window === 'undefined' || !('Notification' in window)) {
         return;
       }
 
       try {
-        // Request notification permission
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
           console.warn('[FCM] Notification permissions denied.');
@@ -36,7 +41,6 @@ export const NotificationProvider = ({ children }) => {
         const messaging = await getFirebaseMessaging();
         if (!messaging) return;
 
-        // Dynamically import messaging tools to keep main chunk modular
         const { getToken, onMessage } = await import('firebase/messaging');
 
         const token = await getToken(messaging, {
@@ -44,6 +48,7 @@ export const NotificationProvider = ({ children }) => {
         });
 
         if (token) {
+          setFcmToken(token);
           // Log FCM token in beautiful, premium green console format
           console.log(
             `%c[FCM Token] %c${token}`,
@@ -68,6 +73,21 @@ export const NotificationProvider = ({ children }) => {
 
     initializeFCM();
   }, []);
+
+  // 2. Upload FCM registration token to Mongoose database persistently when user is logged in
+  useEffect(() => {
+    if (user && fcmToken) {
+      const uploadToken = async () => {
+        try {
+          await apiService.auth.registerFcmToken(fcmToken);
+          console.log('[FCM Backend Link] Device registration token successfully saved to Mongoose User profile.');
+        } catch (err) {
+          console.error('[FCM Backend Link] Failed to register token on backend User profile:', err);
+        }
+      };
+      uploadToken();
+    }
+  }, [user, fcmToken]);
 
   const value = useMemo(() => ({ toasts, pushToast, dismissToast }), [toasts]);
 

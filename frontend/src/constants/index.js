@@ -40,6 +40,7 @@ export const PROVIDERS = ['Interakt', 'Wati', 'AiSensy', 'Twilio', 'Custom HTTP 
 export const API_ENDPOINTS = {
   AUTH_LOGIN: '/auth/login',
   AUTH_ME: '/auth/me',
+  AUTH_FCM_TOKEN: '/auth/fcm-token',
   LEADS: '/leads',
   LEAD_BY_ID: (id) => `/leads/${id}`,
   LEAD_NOTES: (id) => `/leads/${id}/notes`,
