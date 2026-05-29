@@ -1,5 +1,27 @@
 {
   "version": 2,
+  "build": {
+    "env": {
+      "VITE_API_BASE_URL": "/api",
+      "VITE_FIREBASE_API_KEY": "AIzaSyB7ZVmkdQxYU_q8H7GJcraPjlW5VaTR8WQ",
+      "VITE_FIREBASE_AUTH_DOMAIN": "printcrm-4cc78.firebaseapp.com",
+      "VITE_FIREBASE_PROJECT_ID": "printcrm-4cc78",
+      "VITE_FIREBASE_STORAGE_BUCKET": "printcrm-4cc78.firebasestorage.app",
+      "VITE_FIREBASE_MESSAGING_SENDER_ID": "1054975403150",
+      "VITE_FIREBASE_APP_ID": "1:1054975403150:web:60e3f4dc7f716eaa3cd5df",
+      "VITE_FIREBASE_VAPID_KEY": "G-LQ486JN8PP",
+      "VITE_WHATSAPP_PROVIDER": "interakt",
+      "VITE_WHATSAPP_API_BASE_URL": "https://api.interakt.ai/v1",
+      "VITE_WHATSAPP_API_TOKEN": "your_whatsapp_default_token"
+    }
+  },
+  "env": {
+    "MONGODB_URI": "mongodb+srv://pritamdev649_db_user:dsbtAjXPQcCNkaD5@alldbs.smfca1k.mongodb.net/PrintCrm",
+    "JWT_SECRET": "printcrm_production_secret_key",
+    "CLOUDINARY_CLOUD_NAME": "dy8tcff14",
+    "CLOUDINARY_API_KEY": "888553949281274",
+    "CLOUDINARY_API_SECRET": "EU-32NFbCXw9PNaVFaKLL3mBu-0"
+  },
   "builds": [
     {
       "src": "frontend/package.json",
